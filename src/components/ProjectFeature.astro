@@ -8,7 +8,6 @@ interface Props {
   year?: number;
   tags?: string[];
   flip?: boolean;
-  placeholder?: boolean;
 }
 
 const {
@@ -20,54 +19,41 @@ const {
   year,
   tags = [],
   flip = false,
-  placeholder = false,
 } = Astro.props;
 
 const numeral = String(number).padStart(2, '0');
 ---
 
-<article class:list={['feature', { flip, placeholder }]}>
+<article class:list={['feature', { flip }]}>
   <div class="feature-text">
     <span class="feature-number" aria-hidden="true">{numeral}</span>
 
     <div class="feature-body">
-      {placeholder ? (
-        <>
-          <h3 class="feature-title placeholder-title">Unwritten thing</h3>
-          <p class="feature-description placeholder-description">
-            A slot reserved in the composition. Add a Markdown file to
-            <code>src/content/projects/</code> and it fills in automatically.
-          </p>
-        </>
-      ) : (
-        <>
-          <h3 class="feature-title">
-            <a href={href} class="feature-title-link">
-              {title}
-              <span class="visually-hidden"> — view project</span>
-            </a>
-          </h3>
+      <h3 class="feature-title">
+        <a href={href} class="feature-title-link">
+          {title}
+          <span class="visually-hidden"> — view project</span>
+        </a>
+      </h3>
 
-          {(status || year) && (
-            <p class="feature-meta type-meta">
-              {[status, year].filter(Boolean).join(' · ')}
-            </p>
-          )}
-
-          <p class="feature-description">{description}</p>
-
-          {tags.length > 0 && (
-            <ul class="feature-tags">
-              {tags.map(tag => <li class="type-meta">{tag}</li>)}
-            </ul>
-          )}
-
-          <a href={href} class="arrow-link feature-link">
-            Read more
-            <span class="arrow" aria-hidden="true">→</span>
-          </a>
-        </>
+      {(status || year) && (
+        <p class="feature-meta type-meta">
+          {[status, year].filter(Boolean).join(' · ')}
+        </p>
       )}
+
+      <p class="feature-description">{description}</p>
+
+      {tags.length > 0 && (
+        <ul class="feature-tags">
+          {tags.map(tag => <li class="type-meta">{tag}</li>)}
+        </ul>
+      )}
+
+      <a href={href} class="arrow-link feature-link">
+        Read more
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
     </div>
   </div>
 
@@ -177,31 +163,6 @@ const numeral = String(number).padStart(2, '0');
     gap: 16px;
     flex-wrap: wrap;
     margin-top: 20px;
-  }
-
-  /* Placeholder slot — visibly unfilled, never mistaken for real content */
-  .placeholder .feature-title {
-    color: var(--text-muted);
-    font-style: italic;
-  }
-
-  .placeholder-description {
-    color: var(--text-muted);
-    font-size: 0.9375rem;
-    font-style: italic;
-  }
-
-  .placeholder-description code {
-    font-size: 0.85em;
-    background: var(--bg-subtle);
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-style: normal;
-  }
-
-  .placeholder .feature-visual {
-    background: transparent;
-    border-style: dashed;
   }
 
   .feature-link {

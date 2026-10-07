@@ -31,13 +31,6 @@ for (const photo of photos) {
 const chosenPhotos = featurePhotos.length >= 2
   ? featurePhotos
   : photos.slice(0, 3);
-
-// Reserve the notes index rhythm until there are five published notes.
-const NOTE_TARGET = 5;
-const placeholderNotes = Array.from(
-  { length: Math.max(0, NOTE_TARGET - Math.min(notes.length, NOTE_TARGET)) },
-  () => ({ title: 'Unwritten note', href: '', date: new Date(0) }),
-).map(n => ({ ...n, placeholder: true }));
 ---
 
 <BaseLayout currentPath="/">
@@ -57,7 +50,7 @@ const placeholderNotes = Array.from(
   <section class="section">
     <SectionHeading title="Things" href="/things/" />
 
-    {things.length > 0 ? (
+    {things.length > 0 && (
       <div class="things-list">
         {things.slice(0, 3).map((thing, i) => (
           <ProjectFeature
@@ -71,30 +64,6 @@ const placeholderNotes = Array.from(
             flip={i % 2 === 1}
           />
         ))}
-        {/* Reserve the rest of the composition until real things exist */}
-        {Array.from({ length: Math.max(0, 3 - things.length) }, (_, i) => (
-          <ProjectFeature
-            number={things.length + i + 1}
-            title=""
-            description=""
-            href=""
-            flip={(things.length + i) % 2 === 1}
-            placeholder
-          />
-        ))}
-      </div>
-    ) : (
-      <div class="things-list">
-        {[0, 1, 2].map(i => (
-          <ProjectFeature
-            number={i + 1}
-            title=""
-            description=""
-            href=""
-            flip={i % 2 === 1}
-            placeholder
-          />
-        ))}
       </div>
     )}
   </section>
@@ -103,19 +72,14 @@ const placeholderNotes = Array.from(
   <section class="section">
     <SectionHeading title="Notes" href="/notes/" />
 
-    {notes.length > 0 ? (
+    {notes.length > 0 && (
       <NoteList
-        notes={[
-          ...notes.slice(0, 5).map(note => ({
-            title: note.data.title,
-            href: `/notes/${note.id}/`,
-            date: note.data.date,
-          })),
-          ...placeholderNotes,
-        ]}
+        notes={notes.slice(0, 5).map(note => ({
+          title: note.data.title,
+          href: `/notes/${note.id}/`,
+          date: note.data.date,
+        }))}
       />
-    ) : (
-      <NoteList notes={placeholderNotes} />
     )}
   </section>
 
@@ -168,14 +132,6 @@ const placeholderNotes = Array.from(
 
   .hero-meta {
     margin-top: 40px;
-  }
-
-  /* ─── Empty states ─── */
-  .empty-note {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 1.125rem;
-    color: var(--text-muted);
   }
 
   /* ─── About teaser ─── */
