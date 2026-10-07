@@ -8,11 +8,11 @@ const things = (await getCollection('projects'))
 const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
 ---
 
-<BaseLayout title="Building" description="Things I'm making, and things still growing.">
+<BaseLayout title="Building" description="What I'm making, and what's still growing.">
   <header class="archive-head">
     <h1 class="type-display">Building</h1>
     <p class="archive-intro">
-      Things I'm making, and things still growing.
+      What I'm making, and what's still growing.
       Some finished, some paused, some still a sketch.
     </p>
   </header>
@@ -46,12 +46,12 @@ const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
     ))}
   </ol>
 
-  <p class="no-results" id="no-results" hidden>No things with this tag.</p>
+  <p class="no-results" id="no-results" hidden>No building with this tag.</p>
 </BaseLayout>
 
 <style>
   .archive-head {
-    padding-block: clamp(64px, 10vw, 128px) clamp(48px, 6vw, 72px);
+    padding-block: var(--section-pad) var(--heading-gap);
     max-width: 40ch;
   }
 
@@ -70,7 +70,7 @@ const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
-    padding-bottom: clamp(48px, 6vw, 80px);
+    padding-bottom: var(--heading-gap);
   }
 
   .tag {

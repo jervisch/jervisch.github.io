@@ -60,7 +60,7 @@ const chosenPhotos = featurePhotos.length >= 2
         <p class="about-detail">
           Software, systems, and the space where the two meet.
         </p>
-        <p class="about-now">{SITE.now}</p>
+        {SITE.now && <p class="about-now">{SITE.now}</p>}
         <a href="/about/" class="arrow-link">
           More about me
           <span class="arrow" aria-hidden="true">→</span>
@@ -71,10 +71,10 @@ const chosenPhotos = featurePhotos.length >= 2
 
   <!-- ─── Building ─── -->
   <section class="section">
-    <SectionHeading title="Building" href="/building/" />
-
     {things.length > 0 && (
-      <div class="things-list">
+      <>
+        <SectionHeading title="Building" href="/building/" />
+        <div class="things-list">
         {things.slice(0, 3).map((thing, i) => (
           <BuildingEntry
             number={i + 1}
@@ -85,39 +85,47 @@ const chosenPhotos = featurePhotos.length >= 2
             year={thing.data.year}
             cover={thing.data.cover}
             tags={thing.data.tags}
-            flip={i % 2 === 1}
+            {/* Only alternate when a cover exists — otherwise the flipped
+                text lands in columns 8-12 with nothing filling 1-6. */}
+            flip={i % 2 === 1 && Boolean(thing.data.cover)}
           />
         ))}
-      </div>
+        </div>
+      </>
     )}
   </section>
 
   <!-- ─── Notes ─── -->
   <section class="section">
-    <SectionHeading title="Notes" href="/notes/" />
-
     {notes.length > 0 && (
-      <NoteList
+      <>
+        <SectionHeading title="Notes" href="/notes/" />
+        <NoteList
         notes={notes.slice(0, 5).map(note => ({
           title: note.data.title,
           href: `/notes/${note.id}/`,
           date: note.data.date,
         }))}
       />
+      </>
     )}
   </section>
 
   <!-- ─── Photos ─── -->
   <section class="section">
-    <SectionHeading title="Photos" href="/photos/" linkLabel="All photos" />
-    <PhotoFeature
-      photos={chosenPhotos.map(photo => ({
-        title: photo.data.title,
-        image: photo.data.image,
-        location: photo.data.location,
-        caption: photo.data.caption,
-      }))}
-    />
+    {chosenPhotos.length > 0 && (
+      <>
+        <SectionHeading title="Photos" href="/photos/" linkLabel="All photos" />
+        <PhotoFeature
+          photos={chosenPhotos.map(photo => ({
+            title: photo.data.title,
+            image: photo.data.image,
+            location: photo.data.location,
+            caption: photo.data.caption,
+          }))}
+        />
+      </>
+    )}
   </section>
 </BaseLayout>
 

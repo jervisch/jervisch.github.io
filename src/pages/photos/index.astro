@@ -78,7 +78,7 @@ function getLocations(items: typeof photos): string {
 
 <style>
   .archive-head {
-    padding-block: clamp(64px, 10vw, 128px) clamp(56px, 7vw, 96px);
+    padding-block: var(--section-pad) var(--heading-gap);
     max-width: 42ch;
   }
 
@@ -93,7 +93,7 @@ function getLocations(items: typeof photos): string {
   }
 
   .collection {
-    padding-bottom: clamp(64px, 8vw, 112px);
+    padding-bottom: var(--section-pad);
   }
 
   .collection-head {

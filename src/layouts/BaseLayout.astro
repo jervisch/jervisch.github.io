@@ -58,9 +58,11 @@ const pageTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE
 </head>
 <body>
   <Nav currentPath={currentPath} />
-  <main class:list={['page-content', { 'prose-page': prose, 'page-content--home': home }]}>
-    <slot />
+  <div class:list={['page-content', { 'prose-page': prose, 'page-content--home': home }]}>
+    <main>
+      <slot />
+    </main>
     <Footer />
-  </main>
+  </div>
 </body>
 </html>

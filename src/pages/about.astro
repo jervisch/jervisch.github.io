@@ -22,7 +22,7 @@ const interests = [
       I like understanding how things work.<br />
       Then I like making them work better.
     </p>
-    <p class="about-now">{SITE.now}</p>
+    {SITE.now && <p class="about-now">{SITE.now}</p>}
   </header>
 
   <div class="editorial-grid about-grid">
@@ -115,7 +115,7 @@ const interests = [
 
 <style>
   .about-head {
-    padding-block: clamp(64px, 10vw, 128px) clamp(56px, 7vw, 88px);
+    padding-block: var(--section-pad) var(--heading-gap);
     max-width: 40ch;
   }
 
