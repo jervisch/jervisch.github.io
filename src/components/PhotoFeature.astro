@@ -24,7 +24,7 @@ const resolved = photos.map(p => ({ ...p, hasImage: photoExists(p.image) }));
 <div class="photo-feature">
   {resolved.map((photo, i) => (
     <figure class:list={['photo-frame', `frame-${i % 3}`]}>
-      <a href="/places/" class="photo-link" aria-label={`${photo.title}${photo.location ? `, ${photo.location}` : ''} — view all places`}>
+      <a href="/photos/" class="photo-link" aria-label={`${photo.title}${photo.location ? `, ${photo.location}` : ''} — view all photos`}>
         <span class="photo-surface" style={`background: ${getPhotoGradient(photo.image)};`}>
           {/* Only emit an <img> when the file exists — no broken-image glyphs, no console errors */}
           {photo.hasImage && (
