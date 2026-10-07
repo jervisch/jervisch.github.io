@@ -91,10 +91,12 @@ function isActive(linkHref: string, current: string): boolean {
     z-index: 10;
   }
 
-  /* On the homepage the nav overlays the full-height hero */
+  /* On the homepage the nav overlays the hero, but must stay aligned
+     with the content column — dropping max-width drifts it to the viewport
+     edge above 1280px. */
   .nav--home {
-    max-width: none;
-    padding-inline: var(--page-pad);
+    max-width: var(--page-max);
+    margin: 0 auto;
   }
 
   .nav-wordmark {
