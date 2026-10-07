@@ -5,7 +5,7 @@
 ## Skills
 
 Prefer these skills over manual file edits when available:
-- **`creating-new-content-type`** — scaffolds a new content collection (schema, folder, pages, nav link, homepage column)
+- **`creating-new-content-type`** — scaffolds a new content collection (schema, folder, pages, nav link, homepage section)
 - **`customise-website`** — walks through personalizing site config, colors, fonts, About page, and "Now" section
 
 Never commit real personal data on this user's behalf without confirming it's actually theirs to publish — this is a public GitHub Pages site.
@@ -19,9 +19,10 @@ Never commit real personal data on this user's behalf without confirming it's ac
 ## Content Model
 All content lives in `src/content/` as Markdown with YAML frontmatter:
 - **Posts** (`src/content/posts/`) — published as **Notes**: title, date, description?, tags?, draft?, series?, order?
-- **Projects** (`src/content/projects/`) — published as **Things**: title, description, url?, order? (0 = pinned to homepage), year?, status? (growing/exploring/finished/paused), relatedWork[], tags?
-- **Photos** (`src/content/photos/`) — published as **Places**: title, date, image, caption?, location?, size? (square/tall/wide), collection, tags?
-- **Now** (`src/content/now.md`): Single markdown file for "Now" section
+- **Projects** (`src/content/projects/`) — published as **Building**: title, description, url?, order? (ascending; the homepage shows the first three), year?, status? (growing/exploring/finished/paused), cover?, relatedWork[], tags?
+- **Photos** (`src/content/photos/`) — published as **Photos**: title, date, image, caption?, location?, size? (square/tall/wide), collection, tags?
+- **Now**: a single short line at `SITE.now` in `src/config.ts`, rendered inside About.
+  It is state of mind, not a list of projects.
 
 Files prefixed with `_` are templates and are never published.
 
@@ -30,8 +31,8 @@ Files prefixed with `_` are templates and are never published.
 2. For new collections:
    - Define schema in `src/content.config.ts`
    - Create folder `src/content/<collectionname>/`
-   - Create list page `src/pages/<collectionname>/index.astro` (copy from things)
-   - Create detail page `src/pages/<collectionname>/[...slug].astro` (copy from things)
+   - Create list page `src/pages/<collectionname>/index.astro` (copy from building)
+   - Create detail page `src/pages/<collectionname>/[...slug].astro` (copy from building)
    - Add nav link in `src/components/Nav.astro`
    - Add homepage section in `src/pages/index.astro`
    - Add `relatedWork: ["collectionname/slug"]` to a project to feature that entry in its timeline
@@ -41,6 +42,8 @@ Files prefixed with `_` are templates and are never published.
 - Type system: semantic classes `.type-display`, `.type-title`, `.type-subtitle`, `.type-body`, `.type-meta`, `.type-label`, `.type-nav`
 - Long-form reading styles: single shared `.prose` block in `global.css` — do not re-declare prose rules per page
 - Layout: `.page-content` (max 1280px) plus `.editorial-grid`, which collapses 12 → 8 → 4 columns
+- Section rhythm: `--section-pad` and `--heading-gap` in `global.css` drive every
+  vertical boundary. Do not add ad-hoc `padding-block` values to individual sections.
 - Light/dark theme: Toggles `data-theme` attribute on `<html>`; persists via `localStorage`
 - Theme toggle component: `src/components/ThemeToggle.astro`
 - Fonts: `@fontsource/newsreader` (serif, display/prose headings) and `@fontsource/outfit` (sans, UI/body)
@@ -52,17 +55,18 @@ near 4.8:1. If you change a token, re-check contrast rather than assuming.
 
 ## Routes
 Public URLs use the editorial vocabulary; the collections behind them are unchanged.
-- `/things/` ← `src/content/projects/` (was `/projects/`)
-- `/notes/` ← `src/content/posts/` (was `/writing/`)
-- `/places/` ← `src/content/photos/` (was `/photography/`)
+- `/building/` ← `src/content/projects/`
+- `/notes/` ← `src/content/posts/`
+- `/photos/` ← `src/content/photos/`
 
-The old paths are kept alive as redirects in `astro.config.mjs`, so existing
-inbound links still resolve. Astro emits them as `noindex` meta-refresh pages
-and they stay out of the sitemap. If you rename a route, add a redirect here.
+There are no redirects. The site went live 2026-08-31 and has no inbound links worth
+preserving, so a renamed route is simply gone. When you rename one, update
+`src/components/Nav.astro`, internal links, `src/components/Timeline.astro`'s
+`urlPrefixes` map, and `src/pages/rss.xml.ts`.
 
 ## Configuration
 - Site metadata (name, tagline, location, social links): `src/config.ts`
-- Astro config: `astro.config.mjs` (site URL, redirects, integrations, markdown syntax highlighting)
+- Astro config: `astro.config.mjs` (site URL, integrations, markdown syntax highlighting)
 - TypeScript config: `tsconfig.json` (extends `astro/tsconfigs/strict` with path alias `@/*` → `src/*`)
 
 ## Deployment
@@ -82,8 +86,8 @@ and they stay out of the sitemap. If you rename a route, add a redirect here.
 - Sitemap: `@astrojs/sitemap` integration
 
 ## Component Inventory
-Editorial sections (homepage): `SectionHeading`, `NowBlock`, `ProjectFeature`,
-`NoteList`, `PhotoFeature`
+Editorial sections (homepage): `SectionHeading`, `BuildingEntry`, `NoteList`,
+`PhotoFeature`
 Retained: `GalleryGrid`, `Lightbox`, `Timeline`, `ThemeToggle`, `ReadingProgress`,
 `ShareButton`
 
