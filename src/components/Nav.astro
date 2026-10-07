@@ -4,10 +4,9 @@ import { SITE } from '../config';
 
 interface Props {
   currentPath?: string;
-  home?: boolean;
 }
 
-const { currentPath = '', home = false } = Astro.props;
+const { currentPath = '' } = Astro.props;
 
 const links = [
   { href: '/building/', label: 'Building' },
@@ -22,7 +21,7 @@ function isActive(linkHref: string, current: string): boolean {
 }
 ---
 
-<nav class:list={['nav', { 'nav--home': home }]}>
+<nav class="nav">
   <a href="/" class="nav-wordmark">Jervis</a>
 
   <div class="nav-right">
@@ -91,13 +90,7 @@ function isActive(linkHref: string, current: string): boolean {
     z-index: 10;
   }
 
-  /* On the homepage the nav overlays the hero, but must stay aligned
-     with the content column — dropping max-width drifts it to the viewport
-     edge above 1280px. */
-  .nav--home {
-    max-width: var(--page-max);
-    margin: 0 auto;
-  }
+  
 
   .nav-wordmark {
     font-family: var(--font-sans);
