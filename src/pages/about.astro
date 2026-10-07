@@ -22,6 +22,7 @@ const interests = [
       I like understanding how things work.<br />
       Then I like making them work better.
     </p>
+    <p class="about-now">{SITE.now}</p>
   </header>
 
   <div class="editorial-grid about-grid">
@@ -126,6 +127,17 @@ const interests = [
     font-size: clamp(1.375rem, 2.6vw, 2rem);
     line-height: 1.35;
     color: var(--text);
+  }
+
+  .about-now {
+    margin-top: 28px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 44ch;
   }
 
   .about-visual {

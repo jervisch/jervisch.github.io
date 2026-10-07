@@ -2,6 +2,7 @@ export const SITE = {
   name: 'Jervis Chan',
   tagline: 'I make things, think about systems, and notice too much.',
   bio: 'An engineer in Singapore. I like understanding how things work, then making them work better.',
+  now: 'Currently trying to learn about AI, or making content on tech.',
   location: 'Singapore',
   url: 'https://jervvs.github.io',
   social: {
