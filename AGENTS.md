@@ -88,8 +88,8 @@ preserving, so a renamed route is simply gone. When you rename one, update
 ## Component Inventory
 Editorial sections (homepage): `SectionHeading`, `BuildingEntry`, `NoteList`,
 `PhotoFeature`
-Retained: `GalleryGrid`, `Lightbox`, `Timeline`, `ThemeToggle`, `ReadingProgress`,
-`ShareButton`
+Retained: `Nav`, `Footer`, `GalleryGrid`, `Lightbox`, `Timeline`, `ThemeToggle`,
+`ReadingProgress`, `ShareButton`
 
 ## File Extensions
 - `.astro`: Astro components (pages, layouts, UI components)

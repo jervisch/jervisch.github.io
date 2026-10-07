@@ -35,7 +35,7 @@ const projects = defineCollection({
     title: z.string(),
     description: z.string(),
     url: z.string().optional(),
-    order: z.number().default(1),   // 0 = pinned to homepage, 1 = default
+    order: z.number().default(1),   // lower sorts first; the homepage takes the first 3
     year: z.number().optional(),
     status: z.enum(['growing', 'exploring', 'finished', 'paused']).optional(),
     cover: z.string().optional(),

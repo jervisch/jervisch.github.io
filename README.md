@@ -1,6 +1,6 @@
 # Personal Portfolio
 
-A minimal, extensible portfolio site built with [Astro](https://astro.build). Earth-tone palette, seaside-inspired ambient design, dark/light theming, and a content model where adding new work is as simple as writing a text file.
+A minimal, extensible portfolio site built with [Astro](https://astro.build). Earth-tone palette, editorial design, dark/light theming, and a content model where adding new work is as simple as writing a text file.
 
 **Live:** [jervvs.github.io](https://jervvs.github.io)
 
@@ -31,7 +31,7 @@ All content lives in `src/content/`. Here, I have defined three content collecti
 
 The content model is supposed to easily extensible / replaceable. Simply define a collection in `content.config.ts` and you can go from there. Then adding new content is as easy as creating a new Markdown file with the right frontmatter.
 
-### Writing (`src/content/posts/`)
+### Notes (`src/content/posts/`)
 
 Long-form essays and articles. Sorted by date, newest first.
 
@@ -60,7 +60,7 @@ Paginated at 12 posts per page.
 
 **Detail page:** `/notes/[slug]/` — prose with reading progress bar and share button.
 
-### Photography (`src/content/photos/`)
+### Photos (`src/content/photos/`)
 
 Individual photos grouped into collections (e.g., "Singapore", "Tokyo", "AI Art").
 
@@ -93,7 +93,7 @@ click (keyboard navigable: arrows + Escape).
 
 **Adding a new collection:** Just use a new `collection` name in any photo's frontmatter. It appears as a new section automatically.
 
-### Projects (`src/content/projects/`)
+### Building (`src/content/projects/`)
 
 Discrete things you've built. Each has a detail page with body content.
 
