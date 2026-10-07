@@ -50,6 +50,10 @@
   --page-pad: 48px;
   --grid-gap: 24px;
   --measure: 62ch;
+
+  /* rhythm */
+  --section-pad: clamp(72px, 9vw, 120px);
+  --heading-gap: clamp(32px, 4vw, 48px);
 }
 
 /* ─── DESIGN TOKENS — DARK — the same notebook at night ─── */
@@ -321,7 +325,7 @@ body::after {
 
 /* ─── SECTION RHYTHM ─── */
 .section {
-  padding-block: clamp(72px, 10vw, 128px);
+  padding-block: var(--section-pad);
   border-top: 1px solid var(--border);
   transition: border-color 0.4s;
 }

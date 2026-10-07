@@ -25,7 +25,7 @@ const { title, href, linkLabel = `All ${title.toLowerCase()}` } = Astro.props;
     justify-content: space-between;
     gap: 24px;
     padding-bottom: 20px;
-    margin-bottom: clamp(40px, 5vw, 64px);
+    margin-bottom: var(--heading-gap);
     border-bottom: 1px solid var(--border);
     transition: border-color 0.4s;
   }

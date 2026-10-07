@@ -1,13 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import NowBlock from '../components/NowBlock.astro';
 import ProjectFeature from '../components/ProjectFeature.astro';
 import NoteList from '../components/NoteList.astro';
 import PhotoFeature from '../components/PhotoFeature.astro';
 import { SITE } from '../config';
 import { getCollection } from 'astro:content';
-import { readFileSync, statSync } from 'node:fs';
 
 const notes = (await getCollection('posts'))
   .filter(p => !p.data.draft)
@@ -34,15 +32,6 @@ const chosenPhotos = featurePhotos.length >= 2
   ? featurePhotos
   : photos.slice(0, 3);
 
-let nowContent = '';
-let nowUpdated: Date | undefined;
-try {
-  nowContent = readFileSync('./src/content/now.md', 'utf-8').trim();
-  nowUpdated = statSync('./src/content/now.md').mtime;
-} catch {
-  nowContent = '';
-}
-
 // Reserve the notes index rhythm until there are five published notes.
 const NOTE_TARGET = 5;
 const placeholderNotes = Array.from(
@@ -63,9 +52,6 @@ const placeholderNotes = Array.from(
       {SITE.name} · {SITE.location} · Engineer
     </p>
   </section>
-
-  <!-- ─── Now ─── -->
-  {nowContent && <NowBlock content={nowContent} updated={nowUpdated} />}
 
   <!-- ─── Things ─── -->
   <section class="section">
