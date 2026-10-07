@@ -7,11 +7,10 @@ interface Props {
 
 const { refs } = Astro.props;
 
-// Collection folder → public route. Keep in sync with the redirects
-// in astro.config.mjs.
+// Collection folder → public route. Keep in sync with src/components/Nav.astro.
 const urlPrefixes: Record<string, string> = {
   posts: 'notes',
-  projects: 'things',
+  projects: 'building',
   photos: 'places',
 };
 

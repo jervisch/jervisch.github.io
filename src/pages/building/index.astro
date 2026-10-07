@@ -8,17 +8,17 @@ const things = (await getCollection('projects'))
 const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
 ---
 
-<BaseLayout title="Things" description="Things I've made, and things still growing.">
+<BaseLayout title="Building" description="Things I'm making, and things still growing.">
   <header class="archive-head">
-    <h1 class="type-display">Things</h1>
+    <h1 class="type-display">Building</h1>
     <p class="archive-intro">
-      Things I've made, and things still growing.
+      Things I'm making, and things still growing.
       Some finished, some paused, some still a sketch.
     </p>
   </header>
 
   {allTags.length > 0 && (
-    <div class="tag-filter" id="tag-filter" role="group" aria-label="Filter things by tag">
+    <div class="tag-filter" id="tag-filter" role="group" aria-label="Filter building by tag">
       <button class="tag active" data-tag="" aria-pressed="true">All</button>
       {allTags.map(tag => (
         <button class="tag" data-tag={tag} aria-pressed="false">{tag}</button>
@@ -28,10 +28,10 @@ const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
 
   <h2 class="type-label index-label">Index</h2>
 
-  <ol class="archive" id="thing-list">
+  <ol class="archive" id="building-list">
     {things.map((thing, i) => (
       <li class="archive-row" data-tags={thing.data.tags.join(',')}>
-        <a href={`/things/${thing.id}/`} class="archive-link">
+        <a href={`/building/${thing.id}/`} class="archive-link">
           <span class="archive-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
           <span class="archive-main">
             <span class="archive-title">{thing.data.title}</span>
@@ -202,7 +202,7 @@ const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
 <script>
   function initTagFilter() {
     const filterBar = document.getElementById('tag-filter');
-    const list = document.getElementById('thing-list');
+    const list = document.getElementById('building-list');
     const noResults = document.getElementById('no-results');
     if (!filterBar || !list) return;
 

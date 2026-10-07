@@ -38,6 +38,7 @@ const projects = defineCollection({
     order: z.number().default(1),   // 0 = pinned to homepage, 1 = default
     year: z.number().optional(),
     status: z.enum(['growing', 'exploring', 'finished', 'paused']).optional(),
+    cover: z.string().optional(),
     relatedWork: z.array(z.string()).default([]),  // refs like "posts/my-post" — rendered as a timeline
     tags: z.array(z.string()).default([]),
   }),

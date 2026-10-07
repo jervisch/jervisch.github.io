@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
-import ProjectFeature from '../components/ProjectFeature.astro';
+import BuildingEntry from '../components/BuildingEntry.astro';
 import NoteList from '../components/NoteList.astro';
 import PhotoFeature from '../components/PhotoFeature.astro';
 import { SITE } from '../config';
@@ -46,18 +46,18 @@ const chosenPhotos = featurePhotos.length >= 2
     </p>
   </section>
 
-  <!-- ─── Things ─── -->
+  <!-- ─── Building ─── -->
   <section class="section">
-    <SectionHeading title="Things" href="/things/" />
+    <SectionHeading title="Building" href="/building/" />
 
     {things.length > 0 && (
       <div class="things-list">
         {things.slice(0, 3).map((thing, i) => (
-          <ProjectFeature
+          <BuildingEntry
             number={i + 1}
             title={thing.data.title}
             description={thing.data.description}
-            href={`/things/${thing.id}/`}
+            href={`/building/${thing.id}/`}
             status={thing.data.status}
             year={thing.data.year}
             tags={thing.data.tags}
