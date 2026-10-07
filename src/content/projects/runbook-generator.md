@@ -2,6 +2,8 @@
 title: "Runbook Generator"
 description: "Turns messy notes into structured step-by-step guides that anyone can follow."
 order: 1
+status: "exploring"
+year: 2026
 tags: ["documentation", "automation"]
 ---
 
