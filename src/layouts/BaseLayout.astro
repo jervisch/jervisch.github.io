@@ -10,6 +10,7 @@ interface Props {
   description?: string;
   currentPath?: string;
   prose?: boolean;
+  home?: boolean;
 }
 
 const {
@@ -17,6 +18,7 @@ const {
   description = SITE.tagline,
   currentPath = Astro.url.pathname,
   prose = false,
+  home = false,
 } = Astro.props;
 
 const pageTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE.tagline}`;
@@ -55,8 +57,8 @@ const pageTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} — ${SITE
   <ClientRouter />
 </head>
 <body>
-  <Nav currentPath={currentPath} />
-  <main class:list={['page-content', { 'prose-page': prose }]}>
+  <Nav currentPath={currentPath} home={home} />
+  <main class:list={['page-content', { 'prose-page': prose, 'page-content--home': home }]}>
     <slot />
     <Footer />
   </main>

@@ -276,9 +276,15 @@ body::after {
 .page-content {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: 0 var(--page-pad) 0;
+  /* Clears the absolutely-positioned nav */
+  padding: 104px var(--page-pad) 0;
   position: relative;
   z-index: 1;
+}
+
+/* The homepage hero is a full-height panel, so it supplies its own offset */
+.page-content--home {
+  padding-top: 0;
 }
 
 /* Prose pages (notes, projects) keep a readable measure

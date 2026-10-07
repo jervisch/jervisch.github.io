@@ -33,7 +33,7 @@ const chosenPhotos = featurePhotos.length >= 2
   : photos.slice(0, 3);
 ---
 
-<BaseLayout currentPath="/">
+<BaseLayout currentPath="/" home>
   <!-- ─── Hero ─── -->
   <section class="hero">
     <h1 class="hero-name type-display">
@@ -44,6 +44,29 @@ const chosenPhotos = featurePhotos.length >= 2
     <p class="hero-meta type-meta">
       {SITE.name} · {SITE.location} · Engineer
     </p>
+  </section>
+
+  <!-- ─── About ─── -->
+  <section class="section about-teaser">
+    <div class="editorial-grid">
+      <div class="about-teaser-aside">
+        <h2 class="type-label">About</h2>
+      </div>
+      <div class="about-teaser-body">
+        <p class="about-statement">
+          I like understanding how things work.<br />
+          Then I like making them work better.
+        </p>
+        <p class="about-detail">
+          Software, systems, and the space where the two meet.
+        </p>
+        <p class="about-now">{SITE.now}</p>
+        <a href="/about/" class="arrow-link">
+          More about me
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
   </section>
 
   <!-- ─── Building ─── -->
@@ -96,39 +119,20 @@ const chosenPhotos = featurePhotos.length >= 2
       }))}
     />
   </section>
-
-  <!-- ─── About ─── -->
-  <section class="section about-teaser">
-    <div class="editorial-grid">
-      <div class="about-teaser-aside">
-        <h2 class="type-label">About</h2>
-      </div>
-      <div class="about-teaser-body">
-        <p class="about-statement">
-          I like understanding how things work.<br />
-          Then I like making them work better.
-        </p>
-        <p class="about-detail">
-          Software, systems, and the space where the two meet.
-        </p>
-        <a href="/about/" class="arrow-link">
-          More about me
-          <span class="arrow" aria-hidden="true">→</span>
-        </a>
-      </div>
-    </div>
-  </section>
 </BaseLayout>
 
 <style>
   /* ─── Hero ─── */
   .hero {
-    padding-block: clamp(72px, 12vw, 168px) clamp(64px, 9vw, 120px);
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: clamp(48px, 7vw, 88px);
   }
 
   .hero-name {
     margin: 0;
-    max-width: 20ch;
   }
 
   .hero-meta {
@@ -163,6 +167,16 @@ const chosenPhotos = featurePhotos.length >= 2
     line-height: 1.7;
     color: var(--text-secondary);
     margin-top: 20px;
+  }
+
+  .about-now {
+    margin-top: 16px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
   }
 
   .about-teaser-body .arrow-link {
