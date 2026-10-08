@@ -1,13 +1,11 @@
 ---
-import { photoExists } from '../lib/photoGradient';
+import { getPhotoGradient } from '../lib/photoGradient';
 
 interface Props {
   number: number;
   title: string;
   description: string;
   href: string;
-  status?: string;
-  year?: number;
   tags?: string[];
   flip?: boolean;
   cover?: string;
@@ -18,8 +16,6 @@ const {
   title,
   description,
   href,
-  status,
-  year,
   tags = [],
   flip = false,
   cover,
@@ -27,9 +23,9 @@ const {
 
 const numeral = String(number).padStart(2, '0');
 
-// Only show the visual slot when the image actually exists on disk —
-// never render an <img> that 404s.
-const hasCover = cover ? photoExists(cover) : false;
+// Always show the visual slot with gradient placeholder —
+// real images replace it when they exist
+const gradient = cover ? getPhotoGradient(cover) : undefined;
 ---
 
 <article class:list={['feature', { flip }]}>
@@ -43,12 +39,6 @@ const hasCover = cover ? photoExists(cover) : false;
           <span class="visually-hidden"> — view project</span>
         </a>
       </h3>
-
-      {(status || year) && (
-        <p class="feature-meta type-meta">
-          {[status, year].filter(Boolean).join(' · ')}
-        </p>
-      )}
 
       <p class="feature-description">{description}</p>
 
@@ -65,9 +55,9 @@ const hasCover = cover ? photoExists(cover) : false;
     </div>
   </div>
 
-  {hasCover && (
-    <div class="feature-visual">
-      <img src={cover} alt="" loading="lazy" />
+  {gradient && (
+    <div class="feature-visual" style={`background: ${gradient};`}>
+      {cover && <img src={cover} alt="" loading="lazy" />}
     </div>
   )}
 </article>
@@ -96,7 +86,8 @@ const hasCover = cover ? photoExists(cover) : false;
     grid-column: 7 / span 6;
     aspect-ratio: 4 / 3;
     overflow: hidden;
-    background: var(--bg-subtle);
+    background-size: cover;
+    background-position: center;
   }
 
   .feature-visual img {

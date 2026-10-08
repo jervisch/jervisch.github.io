@@ -4,7 +4,7 @@ export const SITE = {
   bio: 'An engineer in Singapore. I like understanding how things work, then making them work better.',
   now: 'Currently trying to learn about AI, or making content on tech.',
   location: 'Singapore',
-  url: 'https://jervvs.github.io',
+  url: 'https://jervisch.github.io',
   social: {
     github: { url: 'https://github.com/jervvs', label: 'GitHub' },
     linkedin: { url: 'https://www.linkedin.com/in/jervis-chan/', label: 'LinkedIn' },

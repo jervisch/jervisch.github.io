@@ -44,6 +44,9 @@ Files prefixed with `_` are templates and are never published.
 - Layout: `.page-content` (max 1280px) plus `.editorial-grid`, which collapses 12 → 8 → 4 columns
 - Section rhythm: `--section-pad` and `--heading-gap` in `global.css` drive every
   vertical boundary. Do not add ad-hoc `padding-block` values to individual sections.
+  Two exceptions are intentional: `.hero`'s bottom offset, which positions the
+  statement inside a viewport-height panel, and `BuildingEntry`'s item spacing, which
+  separates entries rather than sections.
 - Light/dark theme: Toggles `data-theme` attribute on `<html>`; persists via `localStorage`
 - Theme toggle component: `src/components/ThemeToggle.astro`
 - Fonts: `@fontsource/newsreader` (serif, display/prose headings) and `@fontsource/outfit` (sans, UI/body)

@@ -57,14 +57,7 @@ const chosenPhotos = featurePhotos.length >= 2
           I like understanding how things work.<br />
           Then I like making them work better.
         </p>
-        <p class="about-detail">
-          Software, systems, and the space where the two meet.
-        </p>
-        {SITE.now && <p class="about-now">{SITE.now}</p>}
-        <a href="/about/" class="arrow-link">
-          More about me
-          <span class="arrow" aria-hidden="true">→</span>
-        </a>
+        {SITE.now && <p class="about-now">Now: {SITE.now}</p>}
       </div>
     </div>
   </section>
@@ -81,8 +74,6 @@ const chosenPhotos = featurePhotos.length >= 2
             title={thing.data.title}
             description={thing.data.description}
             href={`/building/${thing.id}/`}
-            status={thing.data.status}
-            year={thing.data.year}
             cover={thing.data.cover}
             tags={thing.data.tags}
             {/* Only alternate when a cover exists — otherwise the flipped
@@ -167,14 +158,6 @@ const chosenPhotos = featurePhotos.length >= 2
     line-height: 1.28;
     letter-spacing: -0.018em;
     color: var(--text);
-  }
-
-  .about-detail {
-    font-size: 1rem;
-    font-weight: 300;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    margin-top: 20px;
   }
 
   .about-now {

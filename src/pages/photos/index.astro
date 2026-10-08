@@ -1,8 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import GalleryGrid from '../../components/GalleryGrid.astro';
-import Lightbox from '../../components/Lightbox.astro';
 import { getCollection } from 'astro:content';
+import { getPhotoGradient } from '../../lib/photoGradient';
 
 const photos = (await getCollection('photos'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -14,22 +13,25 @@ for (const photo of photos) {
   collections.get(key)!.push(photo);
 }
 
-function getDateLabel(items: typeof photos): string {
-  const dates = items.map(p => p.data.date);
-  const newest = new Date(Math.max(...dates.map(d => d.valueOf())));
-  const oldest = new Date(Math.min(...dates.map(d => d.valueOf())));
-  const fmt = (d: Date) => new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(d);
-  return newest.getFullYear() === oldest.getFullYear() && newest.getMonth() === oldest.getMonth()
-    ? fmt(newest)
-    : `${fmt(oldest)} — ${fmt(newest)}`;
-}
-
-function getLocations(items: typeof photos): string {
-  const places = [...new Set(items.map(p => p.data.location).filter(Boolean))] as string[];
-  if (places.length === 0) return '';
-  if (places.length <= 3) return places.join(' · ');
-  return `${places.slice(0, 3).join(' · ')} +${places.length - 3}`;
-}
+const collectionEntries = Array.from(collections.entries()).map(([name, collectionPhotos]) => {
+  const firstPhoto = collectionPhotos[0];
+  return {
+    name,
+    count: collectionPhotos.length,
+    heroImage: firstPhoto.data.image,
+    heroTitle: firstPhoto.data.title,
+    locations: [...new Set(collectionPhotos.map(p => p.data.location).filter(Boolean))],
+    dateRange: (() => {
+      const dates = collectionPhotos.map(p => p.data.date);
+      const newest = new Date(Math.max(...dates.map(d => d.valueOf())));
+      const oldest = new Date(Math.min(...dates.map(d => d.valueOf())));
+      const fmt = (d: Date) => new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(d);
+      return newest.getFullYear() === oldest.getFullYear() && newest.getMonth() === oldest.getMonth()
+        ? fmt(newest)
+        : `${fmt(oldest)} — ${fmt(newest)}`;
+    })(),
+  };
+});
 ---
 
 <BaseLayout title="Photos" description="Moments from around Singapore and beyond.">
@@ -40,40 +42,27 @@ function getLocations(items: typeof photos): string {
     </p>
   </header>
 
-  {Array.from(collections.entries()).map(([name, collectionPhotos]) => {
-    const photoData = collectionPhotos.map(p => ({
-      title: p.data.title,
-      image: p.data.image,
-      location: p.data.location,
-      date: p.data.date,
-      size: p.data.size,
-      tags: p.data.tags,
-      caption: p.data.caption,
-    }));
-
-    const locations = getLocations(collectionPhotos);
-
-    return (
-      <section class="collection" id={name.toLowerCase().replace(/\s+/g, '-')}>
-        <header class="collection-head">
-          <div class="collection-head-main">
-            <h2 class="collection-name">{name}</h2>
-            {locations && <p class="collection-locations">{locations}</p>}
+  <section class="collection-grid">
+    {collectionEntries.map(collection => (
+      <article class="collection-card" id={collection.name.toLowerCase().replace(/\s+/g, '-')}>
+        <a href={`/photos/${collection.name.toLowerCase().replace(/\s+/g, '-')}/`} class="collection-link">
+          <div class="collection-hero" style={`background: ${getPhotoGradient(collection.heroImage)};`}>
+            {collection.heroImage && <img src={collection.heroImage} alt={collection.heroTitle} loading="lazy" />}
           </div>
-          <div class="collection-head-meta">
-            <span class="collection-date">{getDateLabel(collectionPhotos)}</span>
-            <span class="collection-count">
-              {collectionPhotos.length} {collectionPhotos.length === 1 ? 'photograph' : 'photographs'}
-            </span>
+          <div class="collection-info">
+            <h2 class="collection-name">{collection.name}</h2>
+            <p class="collection-meta">
+              <span class="collection-date">{collection.dateRange}</span>
+              <span class="collection-count">{collection.count} {collection.count === 1 ? 'photo' : 'photos'}</span>
+            </p>
+            {collection.locations.length > 0 && (
+              <p class="collection-locations">{collection.locations.join(' · ')}</p>
+            )}
           </div>
-        </header>
-
-        <GalleryGrid photos={photoData} />
-      </section>
-    );
-  })}
-
-  <Lightbox />
+        </a>
+      </article>
+    ))}
+  </section>
 </BaseLayout>
 
 <style>
@@ -92,53 +81,92 @@ function getLocations(items: typeof photos): string {
     color: var(--text-secondary);
   }
 
-  .collection {
-    padding-bottom: var(--section-pad);
+  .collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--grid-gap);
   }
 
-  .collection-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: wrap;
-    padding-bottom: 24px;
-    margin-bottom: 28px;
-    border-bottom: 1px solid var(--border);
-    transition: border-color 0.4s;
+  .collection-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .collection-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .collection-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .collection-hero {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .collection-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+
+  .collection-card:hover .collection-hero img {
+    transform: scale(1.05);
+  }
+
+  .collection-info {
+    padding: 24px;
   }
 
   .collection-name {
     font-family: var(--font-serif);
     font-weight: 300;
-    font-size: clamp(2rem, 4vw, 2.875rem);
-    line-height: 1.05;
-    letter-spacing: -0.025em;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
     color: var(--text);
+    margin: 0 0 8px;
+    transition: color 0.2s;
   }
 
-  .collection-locations {
-    margin-top: 10px;
-    font-size: 0.8125rem;
-    font-weight: 300;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
+  .collection-card:hover .collection-name {
+    color: var(--accent);
   }
 
-  .collection-head-meta {
+  .collection-meta {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: flex-end;
-    text-align: right;
-  }
-
-  .collection-date,
-  .collection-count {
+    flex-wrap: wrap;
+    gap: 12px;
     font-size: 0.6875rem;
     font-weight: 400;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .collection-locations {
+    font-size: 0.8125rem;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 700px) {
+    .collection-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
