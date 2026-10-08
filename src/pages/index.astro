@@ -46,28 +46,11 @@ const chosenPhotos = featurePhotos.length >= 2
     </p>
   </section>
 
-  <!-- ─── About ─── -->
-  <section class="section about-teaser">
-    <div class="editorial-grid">
-      <div class="about-teaser-aside">
-        <h2 class="type-label">About</h2>
-      </div>
-      <div class="about-teaser-body">
-        <p class="about-statement">
-          I like understanding how things work.<br />
-          Then I like making them work better.
-        </p>
-        {SITE.now && <p class="about-now">Now: {SITE.now}</p>}
-      </div>
-    </div>
-  </section>
-
   <!-- ─── Building ─── -->
-  <section class="section">
+  <section class="section building-section">
+    <SectionHeading title="Building" href="/building/" />
     {things.length > 0 && (
-      <>
-        <SectionHeading title="Building" href="/building/" />
-        <div class="things-list">
+      <div class="things-list">
         {things.slice(0, 3).map((thing, i) => (
           <BuildingEntry
             number={i + 1}
@@ -76,47 +59,38 @@ const chosenPhotos = featurePhotos.length >= 2
             href={`/building/${thing.id}/`}
             cover={thing.data.cover}
             tags={thing.data.tags}
-            {/* Only alternate when a cover exists — otherwise the flipped
-                text lands in columns 8-12 with nothing filling 1-6. */}
-            flip={i % 2 === 1 && Boolean(thing.data.cover)}
+            flip={i % 2 === 1}
           />
         ))}
-        </div>
-      </>
+      </div>
     )}
   </section>
 
   <!-- ─── Notes ─── -->
-  <section class="section">
+  <section class="section notes-section">
+    <SectionHeading title="Notes" href="/notes/" />
     {notes.length > 0 && (
-      <>
-        <SectionHeading title="Notes" href="/notes/" />
-        <NoteList
+      <NoteList
         notes={notes.slice(0, 5).map(note => ({
           title: note.data.title,
           href: `/notes/${note.id}/`,
           date: note.data.date,
         }))}
       />
-      </>
     )}
   </section>
 
   <!-- ─── Photos ─── -->
-  <section class="section">
-    {chosenPhotos.length > 0 && (
-      <>
-        <SectionHeading title="Photos" href="/photos/" linkLabel="All photos" />
-        <PhotoFeature
-          photos={chosenPhotos.map(photo => ({
-            title: photo.data.title,
-            image: photo.data.image,
-            location: photo.data.location,
-            caption: photo.data.caption,
-          }))}
-        />
-      </>
-    )}
+  <section class="section photos-section">
+    <SectionHeading title="Photos" href="/photos/" linkLabel="All photos" />
+    <PhotoFeature
+      photos={chosenPhotos.map(photo => ({
+        title: photo.data.title,
+        image: photo.data.image,
+        location: photo.data.location,
+        caption: photo.data.caption,
+      }))}
+    />
   </section>
 </BaseLayout>
 
@@ -138,55 +112,46 @@ const chosenPhotos = featurePhotos.length >= 2
     margin-top: 40px;
   }
 
-  /* ─── About teaser ─── */
-  .about-teaser-aside {
-    grid-column: 1 / span 3;
+  /* ─── Sections ─── */
+  .section {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: var(--section-pad);
   }
 
-  .about-teaser-body {
-    grid-column: 5 / span 7;
+  .section .section-heading {
+    margin-bottom: var(--heading-gap);
   }
 
-  .about-teaser-aside h2 {
-    margin: 0;
+  /* Building section - alternating layout */
+  .building-section .things-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
   }
 
-  .about-statement {
-    font-family: var(--font-serif);
-    font-weight: 300;
-    font-size: clamp(1.5rem, 2.8vw, 2.125rem);
-    line-height: 1.28;
-    letter-spacing: -0.018em;
-    color: var(--text);
+  .building-section .feature {
+    min-height: 100svh;
   }
 
-  .about-now {
-    margin-top: 16px;
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 1.125rem;
-    line-height: 1.6;
-    color: var(--text-secondary);
+  /* Notes section */
+  .notes-section .note-list {
+    flex: 1;
   }
 
-  .about-teaser-body .arrow-link {
-    margin-top: 32px;
-  }
-
-  @media (max-width: 1024px) {
-    .about-teaser-aside { grid-column: 1 / span 8; }
-    .about-teaser-body { grid-column: 1 / span 8; margin-top: 28px; }
+  /* Photos section */
+  .photos-section .photo-feature {
+    flex: 1;
   }
 
   @media (max-width: 700px) {
-    .about-teaser-aside,
-    .about-teaser-body {
-      grid-column: 1 / -1;
-    }
-
-    .about-statement br {
-      display: none;
+    .section {
+      min-height: auto;
+      padding-top: var(--section-pad);
+      padding-bottom: var(--section-pad);
     }
   }
 </style>

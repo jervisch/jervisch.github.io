@@ -23,8 +23,6 @@ const {
 
 const numeral = String(number).padStart(2, '0');
 
-// Always show the visual slot with gradient placeholder —
-// real images replace it when they exist
 const gradient = cover ? getPhotoGradient(cover) : undefined;
 ---
 
@@ -68,7 +66,7 @@ const gradient = cover ? getPhotoGradient(cover) : undefined;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--grid-gap);
     align-items: start;
-    padding-block: clamp(48px, 6vw, 80px);
+    padding-block: clamp(64px, 8vw, 100px);
     border-top: 1px solid var(--border);
     transition: border-color 0.4s;
   }
@@ -80,6 +78,7 @@ const gradient = cover ? getPhotoGradient(cover) : undefined;
 
   .feature-text {
     grid-column: 1 / span 5;
+    padding-inline-end: var(--grid-gap);
   }
 
   .feature-visual {
@@ -132,10 +131,6 @@ const gradient = cover ? getPhotoGradient(cover) : undefined;
 
   .feature-title-link:hover {
     color: var(--accent);
-  }
-
-  .feature-meta {
-    margin: 0 0 20px;
   }
 
   .feature-description {
