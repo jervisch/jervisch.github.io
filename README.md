@@ -2,7 +2,7 @@
 
 A minimal, extensible portfolio site built with [Astro](https://astro.build). Earth-tone palette, editorial design, dark/light theming, and a content model where adding new work is as simple as writing a text file.
 
-**Live:** [jervvs.github.io](https://jervvs.github.io)
+**Live:** [jervisch.github.io](https://jervisch.github.io)
 
 **Want your own copy?** Click **Use this template** above — this gives you a clean copy with a single commit and none of my history. (Forking works too, but will carry over my full commit history.)
 
@@ -13,8 +13,8 @@ New to this? Start with SETUP.md for a step-by-step first run.
 ## Quick Start
 
 ```bash
-git clone https://github.com/jervvs/jervvs.github.io.git
-cd jervvs.github.io
+git clone https://github.com/jervisch/jervisch.github.io.git
+cd jervisch.github.io
 npm install
 npm run dev
 # Open http://localhost:4321

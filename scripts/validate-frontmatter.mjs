@@ -6,8 +6,8 @@ import { glob } from 'glob';
 import matter from 'gray-matter';
 
 const collections = {
-  posts: {
-    dir: 'src/content/posts',
+  notes: {
+    dir: 'src/content/notes',
     required: ['title', 'date'],
     optional: ['description', 'tags', 'draft', 'series', 'order'],
     validate: (fm, file) => {
@@ -44,6 +44,13 @@ const collections = {
           if (typeof ref !== 'string' || !ref.includes('/')) {
             throw new Error(`relatedWork entries must be "collection/id" format in ${file}: ${ref}`);
           }
+          const [collection] = ref.split('/');
+          if (collection !== 'notes' && collection !== 'projects') {
+            throw new Error(
+              `relatedWork entries must reference "notes" or "projects" (photos have no ` +
+              `per-entry page) in ${file}: ${ref}`
+            );
+          }
         }
       }
       if (fm.tags && !Array.isArray(fm.tags)) {
@@ -64,7 +71,7 @@ const collections = {
       }
       const imagePath = path.join(process.cwd(), 'public', fm.image);
       if (!fs.existsSync(imagePath)) {
-        throw new Error(`Referenced image not found in ${file}: ${fm.image}`);
+        console.warn(`⚠️  ${file}: image not found yet, will render as a gradient placeholder: ${fm.image}`);
       }
       if (fm.size && !['square', 'tall', 'wide'].includes(fm.size)) {
         throw new Error(`size must be square, tall, or wide in ${file}: ${fm.size}`);
@@ -77,6 +84,13 @@ const collections = {
 };
 
 async function validateCollection(name, config) {
+  // A missing directory would glob to zero files and silently report "all
+  // valid" — which is exactly what a rename looks like. Fail loudly instead.
+  if (!fs.existsSync(config.dir)) {
+    console.error(`❌ Collection "${name}" points at ${config.dir}, which does not exist`);
+    return 1;
+  }
+
   const files = await glob(`${config.dir}/**/*.md`);
   let errors = 0;
 

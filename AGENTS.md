@@ -1,4 +1,4 @@
-# Agent Guidelines for jervvs.github.io
+# Agent Guidelines for jervisch.github.io
 
 > Also readable as `CLAUDE.md` (symlinked to this file).
 

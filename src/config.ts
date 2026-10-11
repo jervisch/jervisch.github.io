@@ -6,7 +6,7 @@ export const SITE = {
   location: 'Singapore',
   url: 'https://jervisch.github.io',
   social: {
-    github: { url: 'https://github.com/jervvs', label: 'GitHub' },
+    github: { url: 'https://github.com/jervisch', label: 'GitHub' },
     linkedin: { url: 'https://www.linkedin.com/in/jervis-chan/', label: 'LinkedIn' },
     tiktok: { url: 'https://www.tiktok.com/@jervisch', label: 'TikTok' },
     email: { url: 'mailto:chanjy09@live.com', label: 'Email' },
