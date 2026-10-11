@@ -1,0 +1,85 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import GalleryGrid from '@/components/GalleryGrid.astro';
+import Lightbox from '@/components/Lightbox.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const photos = await getCollection('photos');
+  const collections = new Map<string, typeof photos>();
+  for (const photo of photos) {
+    const key = photo.data.collection;
+    if (!collections.has(key)) collections.set(key, []);
+    collections.get(key)!.push(photo);
+  }
+  return Array.from(collections.keys()).map(name => ({
+    params: { slug: name.toLowerCase().replace(/\s+/g, '-') },
+    props: { collectionName: name },
+  }));
+}
+
+const { collectionName } = Astro.props;
+
+const photos = (await getCollection('photos'))
+  .filter(p => p.data.collection === collectionName)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const photoData = photos.map(p => ({
+  title: p.data.title,
+  image: p.data.image,
+  location: p.data.location,
+  date: p.data.date,
+  size: p.data.size,
+  tags: p.data.tags,
+  caption: p.data.caption,
+}));
+
+function getDateLabel(items: typeof photos): string {
+  const dates = items.map(p => p.data.date);
+  const newest = new Date(Math.max(...dates.map(d => d.valueOf())));
+  const oldest = new Date(Math.min(...dates.map(d => d.valueOf())));
+  const fmt = (d: Date) => new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(d);
+  return newest.getFullYear() === oldest.getFullYear() && newest.getMonth() === oldest.getMonth()
+    ? fmt(newest)
+    : `${fmt(oldest)} — ${fmt(newest)}`;
+}
+
+function getLocations(items: typeof photos): string {
+  const places = [...new Set(items.map(p => p.data.location).filter(Boolean))] as string[];
+  if (places.length === 0) return '';
+  if (places.length <= 3) return places.join(' · ');
+  return `${places.slice(0, 3).join(' · ')} +${places.length - 3}`;
+}
+
+const locationString = getLocations(photos);
+const dateLabel = getDateLabel(photos);
+---
+
+<BaseLayout title={collectionName} description={`Photos from ${collectionName}.`}>
+  <header class="archive-head">
+    <h1 class="type-display">{collectionName}</h1>
+    <p class="archive-intro">
+      {locationString && locationString + ' · '}{dateLabel} · {photos.length} {photos.length === 1 ? 'photo' : 'photos'}
+    </p>
+  </header>
+
+  <GalleryGrid photos={photoData} />
+  <Lightbox />
+</BaseLayout>
+
+<style>
+  .archive-head {
+    padding-block: var(--section-pad) var(--heading-gap);
+    max-width: 42ch;
+  }
+
+  .archive-intro {
+    margin-top: 28px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+</style>

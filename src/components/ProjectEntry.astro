@@ -1,0 +1,183 @@
+---
+import { getPhotoGradient } from '../lib/photoGradient';
+
+interface Props {
+  number: number;
+  title: string;
+  description: string;
+  href: string;
+  tags?: string[];
+  flip?: boolean;
+  cover?: string;
+}
+
+const {
+  number,
+  title,
+  description,
+  href,
+  tags = [],
+  flip = false,
+  cover,
+} = Astro.props;
+
+const numeral = String(number).padStart(2, '0');
+
+const gradient = cover ? getPhotoGradient(cover) : undefined;
+---
+
+<article class:list={['feature', { flip }]}>
+  <div class="feature-text">
+    <span class="feature-number" aria-hidden="true">{numeral}</span>
+
+    <div class="feature-body">
+      <h3 class="feature-title">
+        <a href={href} class="feature-title-link">
+          {title}
+          <span class="visually-hidden"> — view project</span>
+        </a>
+      </h3>
+
+      <p class="feature-description">{description}</p>
+
+      {tags.length > 0 && (
+        <ul class="feature-tags">
+          {tags.map(tag => <li class="type-meta">{tag}</li>)}
+        </ul>
+      )}
+
+      <a href={href} class="arrow-link feature-link">
+        Read more
+        <span class="arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </div>
+
+  {gradient && (
+    <div class="feature-visual" style={`background: ${gradient};`}>
+      {cover && <img src={cover} alt="" loading="lazy" />}
+    </div>
+  )}
+</article>
+
+<style>
+  .feature {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--grid-gap);
+    align-items: start;
+    padding-block: clamp(64px, 8vw, 100px);
+    border-top: 1px solid var(--border);
+    transition: border-color 0.4s;
+  }
+
+  .feature:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .feature-text {
+    grid-column: 1 / span 5;
+    padding-inline-end: var(--grid-gap);
+  }
+
+  .feature-visual {
+    grid-column: 7 / span 6;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .feature-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Alternate the composition so the page never reads as a stack of cards */
+  .feature.flip .feature-text {
+    grid-column: 8 / span 5;
+    order: 2;
+  }
+
+  .feature.flip .feature-visual {
+    grid-column: 1 / span 6;
+    order: 1;
+  }
+
+  .feature-number {
+    display: block;
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .feature-title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1.625rem, 2.6vw, 2.25rem);
+    line-height: 1.12;
+    letter-spacing: -0.022em;
+    margin: 0 0 12px;
+  }
+
+  .feature-title-link {
+    transition: color 0.2s;
+  }
+
+  .feature-title-link:hover {
+    color: var(--accent);
+  }
+
+  .feature-description {
+    font-family: var(--font-sans);
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 38ch;
+  }
+
+  .feature-tags {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .feature-link {
+    margin-top: 28px;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .feature-text,
+    .feature.flip .feature-text { grid-column: 1 / span 8; order: 1; }
+    .feature-visual,
+    .feature.flip .feature-visual { grid-column: 1 / span 8; order: 2; margin-top: 36px; }
+  }
+
+  @media (max-width: 700px) {
+    .feature-text,
+    .feature.flip .feature-text,
+    .feature-visual,
+    .feature.flip .feature-visual {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

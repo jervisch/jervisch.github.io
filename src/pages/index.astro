@@ -1,195 +1,151 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import WaveDivider from '../components/WaveDivider.astro';
-import CategoryColumn from '../components/CategoryColumn.astro';
+import ProjectEntry from '../components/ProjectEntry.astro';
+import NoteList from '../components/NoteList.astro';
+import PhotosCarousel from '../components/PhotosCarousel.astro';
+import HeroAnimation from '../components/HeroAnimation.astro';
 import { SITE } from '../config';
 import { getCollection } from 'astro:content';
-import { readFileSync } from 'node:fs';
 
-// Query all collections
-const posts = (await getCollection('posts'))
-  .filter(p => !p.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
-
-const allPhotos = (await getCollection('photos'))
+const notes = (await getCollection('notes'))
+  .filter(n => !n.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-// Group by collection, get unique collection names with date ranges
-const photoCollections = new Map<string, { name: string; count: number; newestDate: Date }>();
-for (const p of allPhotos) {
-  const key = p.data.collection;
-  if (!photoCollections.has(key)) {
-    photoCollections.set(key, { name: key, count: 0, newestDate: p.data.date });
-  }
-  const col = photoCollections.get(key)!;
-  col.count++;
-  if (p.data.date > col.newestDate) col.newestDate = p.data.date;
-}
-const recentCollections = Array.from(photoCollections.values()).slice(0, 7);
-
-const projectItems = (await getCollection('projects'))
-  .sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title))
-  .slice(0, 3);
-
-// Read "Now" content
-let nowContent = '';
-try {
-  nowContent = readFileSync('./src/content/now.md', 'utf-8').trim();
-} catch { nowContent = ''; }
-
-// Map collections to CategoryColumn items
-const writingItems = posts.map(p => ({
-  title: p.data.title,
-  description: p.data.description,
-  href: `/writing/${p.id}/`,
-}));
-
-const projectColumnItems = projectItems.map(p => ({
-  title: p.data.title,
-  description: p.data.description,
-  href: `/projects/${p.id}/`,
-}));
-
-const photoColumnItems = recentCollections.map(col => ({
-  title: col.name,
-  href: `/photography/#${col.name.toLowerCase().replace(/\s+/g, '-')}`,
-}));
-
-const socialLinks = Object.values(SITE.social);
+const projects = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
 ---
 
-<BaseLayout currentPath="/">
-  <!-- Hero -->
-  <section class="hero animate-in delay-1">
-    <h1 class="hero-name">{SITE.name}</h1>
-    <p class="hero-tagline">{SITE.tagline}</p>
-    <p class="hero-bio">{SITE.bio}</p>
+<BaseLayout currentPath="/" home>
+  <!-- ─── Hero ─── -->
+  <section class="hero">
+    <HeroAnimation />
+    <h1 class="hero-name type-display">
+      I make things,<br />
+      think about systems,<br />
+      and notice too much.
+    </h1>
+    <p class="hero-meta type-meta">
+      {SITE.name} · {SITE.location} · Engineer
+    </p>
   </section>
 
-  <WaveDivider />
+  <!-- ─── Projects ─── -->
+  <section class="projects-section">
+    <header class="section-header">
+      <h2 class="type-title">Projects</h2>
+      <a href="/projects/" class="section-view-all">All Projects →</a>
+    </header>
 
-  <!-- Category Columns -->
-  <div class="categories">
-    <CategoryColumn
-      title="Writing"
-      items={writingItems}
-      viewAllHref="/writing/"
-      delay={2}
-    />
-    <CategoryColumn
-      title="Projects"
-      items={projectColumnItems}
-      viewAllHref="/projects/"
-      delay={3}
-    />
-    <CategoryColumn
-      title="Photography"
-      items={photoColumnItems}
-      viewAllHref="/photography/"
-      viewAllLabel="All photos →"
-      delay={5}
-    />
-  </div>
+    <div class="projects-cards">
+      {projects.slice(0, 3).map((project, i) => (
+        <ProjectEntry
+          number={i + 1}
+          title={project.data.title}
+          description={project.data.description}
+          href={`/projects/${project.id}/`}
+          cover={project.data.cover}
+          tags={project.data.tags}
+          flip={i % 2 === 1}
+        />
+      ))}
+    </div>
+  </section>
 
-  <!-- Now -->
-  {nowContent && (
-    <section class="section-divider animate-in delay-6">
-      <div class="section-label">Now</div>
-      <p class="now-text">{nowContent}</p>
-    </section>
-  )}
+  <!-- ─── Notes ─── -->
+  <section class="section notes-section">
+    <header class="section-header">
+      <h2 class="type-title">Notes</h2>
+      <a href="/notes/" class="section-view-all">All Notes →</a>
+    </header>
+    {notes.length > 0 && (
+      <NoteList
+        notes={notes.slice(0, 5).map(note => ({
+          title: note.data.title,
+          href: `/notes/${note.id}/`,
+          date: note.data.date,
+        }))}
+      />
+    )}
+  </section>
 
-  <!-- Connect -->
-  <section class="section-divider animate-in delay-7">
-    <div class="section-label">Connect</div>
-    <p class="connect-text">
-      Find me on
-      {socialLinks.map((link, i) => (
-        <>
-          <a href={link.url} class="text-link" target="_blank" rel="noopener noreferrer">{link.label}</a>
-          {i < socialLinks.length - 1 && (i === socialLinks.length - 2 ? ', or ' : ', ')}
-        </>
-      ))}.
-    </p>
+  <!-- ─── Photos ─── -->
+  <section class="section photos-section">
+    <header class="section-header">
+      <h2 class="type-title">Photos</h2>
+      <a href="/photos/" class="section-view-all">All Photos →</a>
+    </header>
+    <PhotosCarousel />
   </section>
 </BaseLayout>
 
 <style>
+  /* ─── Hero ─── */
   .hero {
-    padding-bottom: 48px;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: clamp(48px, 7vw, 88px);
+    position: relative;
+    z-index: 1;
   }
 
   .hero-name {
-    font-size: 32px;
-    font-weight: 200;
-    letter-spacing: -0.03em;
-    color: var(--text);
-    margin-bottom: 14px;
-    transition: color 0.3s;
+    margin: 0;
+    position: relative;
+    z-index: 2;
   }
 
-  .hero-tagline {
-    font-size: 16px;
-    font-weight: 300;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-    letter-spacing: -0.01em;
-    transition: color 0.3s;
+  .hero-meta {
+    margin-top: 40px;
+    position: relative;
+    z-index: 2;
   }
 
-  .hero-bio {
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 1.75;
-    color: var(--text-secondary);
-    max-width: 480px;
-    transition: color 0.3s;
+  .hero-animation {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
   }
 
-  .categories {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    padding: 40px 0;
+  /* ─── Projects Section ─── */
+  .projects-section {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--section-pad) var(--page-pad) calc(var(--section-pad) + 60px);
   }
 
-  .section-divider {
-    padding: 36px 0;
-    border-top: 1px solid var(--border);
-    transition: border-color 0.4s;
+  .projects-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
   }
 
-  .section-divider .section-label {
-    margin-bottom: 14px;
-  }
-
-  .now-text {
-    font-size: 14px;
-    font-weight: 300;
-    line-height: 1.8;
-    color: var(--text-secondary);
-    max-width: 480px;
-    transition: color 0.3s;
-  }
-
-  .connect-text {
-    font-size: 14px;
-    font-weight: 300;
-    color: var(--text-secondary);
-    transition: color 0.3s;
+  .projects-cards .feature {
+    min-height: calc((100svh - 200px) / 3);
   }
 
   @media (max-width: 700px) {
-    .categories {
-      grid-template-columns: 1fr 1fr;
-      gap: 24px 16px;
+    .projects-section {
+      min-height: auto;
+      padding: var(--section-pad) var(--page-pad) calc(var(--section-pad) + 40px);
+    }
+
+    .projects-cards .feature {
+      min-height: auto;
     }
   }
 
-  @media (max-width: 480px) {
-    .categories {
-      grid-template-columns: 1fr;
-    }
+  /* ─── Section Headers ───
+     .section-header and .section-view-all are global — see global.css. */
+
+  /* ─── Notes + Photos Sections — compact gap after Projects ─── */
+  .notes-section,
+  .photos-section {
+    margin-top: calc(var(--section-pad) * 0.5);
   }
 </style>

@@ -1,0 +1,31 @@
+---
+import { getCollection, render } from 'astro:content';
+import NoteLayout from '../../layouts/NoteLayout.astro';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes
+    .filter(note => !note.data.draft || import.meta.env.DEV)
+    .map(note => ({
+      params: { slug: note.id },
+      props: { note },
+    }));
+}
+
+const { note } = Astro.props;
+const { Content } = await render(note);
+
+// Estimate reading time
+const words = note.body ? note.body.split(/\s+/).length : 0;
+const minutesRead = Math.max(1, Math.ceil(words / 250));
+---
+
+<NoteLayout
+  title={note.data.title}
+  date={note.data.date}
+  tags={note.data.tags}
+  minutesRead={minutesRead}
+  description={note.data.description}
+>
+  <Content />
+</NoteLayout>

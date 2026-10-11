@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { getPhotoGradient, photoExists } from '../../lib/photoGradient';
+
+const photos = (await getCollection('photos'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const collections = new Map<string, typeof photos>();
+for (const photo of photos) {
+  const key = photo.data.collection;
+  if (!collections.has(key)) collections.set(key, []);
+  collections.get(key)!.push(photo);
+}
+
+/** The photo that represents a collection: an explicit `cover: true` if one
+    is set, otherwise the newest by date (the array arrives date-sorted). */
+const pickCover = (collectionPhotos: typeof photos) =>
+  collectionPhotos.find(p => p.data.cover) ?? collectionPhotos[0];
+
+const collectionEntries = Array.from(collections.entries()).map(([name, collectionPhotos]) => {
+  const firstPhoto = pickCover(collectionPhotos);
+  return {
+    name,
+    count: collectionPhotos.length,
+    heroImage: firstPhoto.data.image,
+    heroExists: photoExists(firstPhoto.data.image),
+    heroTitle: firstPhoto.data.title,
+    dateRange: (() => {
+      const dates = collectionPhotos.map(p => p.data.date);
+      const newest = new Date(Math.max(...dates.map(d => d.valueOf())));
+      const oldest = new Date(Math.min(...dates.map(d => d.valueOf())));
+      const fmt = (d: Date) => new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(d);
+      return newest.getFullYear() === oldest.getFullYear() && newest.getMonth() === oldest.getMonth()
+        ? fmt(newest)
+        : `${fmt(oldest)} — ${fmt(newest)}`;
+    })(),
+  };
+});
+---
+
+<BaseLayout title="Photos" description="Moments from around Singapore and beyond.">
+  <header class="archive-head">
+    <h1 class="type-display">Photos</h1>
+    <p class="archive-intro">
+      Moments from around Singapore and beyond, grouped by where they happened.
+    </p>
+  </header>
+
+  <section class="collection-grid">
+    {collectionEntries.map(collection => (
+      <article class="collection-card" id={collection.name.toLowerCase().replace(/\s+/g, '-')}>
+        <a href={`/photos/${collection.name.toLowerCase().replace(/\s+/g, '-')}/`} class="collection-link">
+<div class="collection-hero" style={`background: ${getPhotoGradient(collection.heroImage)};`}>
+              {collection.heroExists && <img src={collection.heroImage} alt={collection.heroTitle} loading="lazy" />}
+            </div>
+          </div>
+          <div class="collection-info">
+            <h2 class="collection-name">{collection.name}</h2>
+            <p class="collection-meta">
+              <span class="collection-date">{collection.dateRange}</span>
+              <span class="collection-count">{collection.count} {collection.count === 1 ? 'photo' : 'photos'}</span>
+            </p>
+          </div>
+        </a>
+      </article>
+    ))}
+  </section>
+</BaseLayout>
+
+<style>
+  .archive-head {
+    padding-block: var(--section-pad) var(--heading-gap);
+    max-width: 42ch;
+  }
+
+  .archive-intro {
+    margin-top: 28px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+
+  .collection-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--grid-gap);
+  }
+
+  /* No card surface or border — the photograph is the object, and the text
+     below it sits directly on the page. A bordered panel is what created
+     the pale strip under each image. */
+  .collection-card {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .collection-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .collection-hero {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .collection-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .collection-link:hover .collection-hero img {
+    transform: scale(1.04);
+  }
+
+  .collection-info {
+    padding-top: 16px;
+  }
+
+  .collection-name {
+    font-family: var(--font-serif);
+    font-weight: 300;
+    font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+    line-height: 1.25;
+    letter-spacing: -0.018em;
+    color: var(--text);
+    margin: 0 0 6px;
+    transition: color 0.2s;
+  }
+
+  .collection-link:hover .collection-name {
+    color: var(--accent);
+  }
+
+  .collection-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  @media (max-width: 700px) {
+    .collection-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,8 +1,9 @@
+import { SITE } from './src/config';
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://jervvs.github.io',
+  site: SITE.url,
   integrations: [sitemap()],
   markdown: {
     shikiConfig: {

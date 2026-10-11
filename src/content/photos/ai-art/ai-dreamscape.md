@@ -5,5 +5,6 @@ image: "/images/photos/ai-dreamscape.jpg"
 caption: "What the machine sees when it sleeps"
 size: "wide"
 collection: "AI Art"
+cover: true
 tags: ["ai", "abstract", "landscape"]
 ---

@@ -57,22 +57,10 @@ Then edit `src/pages/about.astro` — replace the placeholder `<div class="photo
 
 ---
 
-## 4. Edit "Now" Section (`src/content/now.md`)
+## 4. Edit the "Now" Line (`src/config.ts`)
 
-This appears on the homepage. Write a short status update:
-
-```markdown
----
-title: "Now"
----
-
-Updated **August 2026**
-
-- Currently building: [Project Name](https://example.com)
-- Learning: Rust, distributed systems
-- Reading: *Book Title* by Author
-- Listening to: Album / Playlist
-```
+Set `SITE.now` to a short sentence describing what you're currently
+interested in. It renders as one italic line inside About.
 
 ---
 
@@ -120,9 +108,11 @@ The repo includes sample content to show the site structure. **Delete or replace
 
 | Collection | Folder | What to do |
 |------------|--------|------------|
-| Posts | `src/content/posts/` | Delete `_ideas.md` and sample posts, or keep as drafts (`draft: true`) |
-| Projects | `src/content/projects/` | Replace `90-day-recomp.md`, `incident-playbook.md`, `this-site.md` |
+| Notes | `src/content/notes/` | Delete `_ideas.md` and the sample notes, or keep them as drafts (`draft: true`) |
+| Projects | `src/content/projects/` | Replace `90-day-recomp.md`, `runbook-generator.md`, `this-site.md` |
 | Photos | `src/content/photos/` | Replace all `.md` files and images in `public/images/photos/` |
+
+`_example.md` and any other `_`-prefixed file is a template — it is never published.
 
 **To hide without deleting:** add `draft: true` to any item's frontmatter.
 
@@ -159,7 +149,7 @@ npm run dev
 # Open http://localhost:4321
 ```
 
-Verify everything looks right: homepage, writing, projects, photography, about, now section, dark/light toggle.
+Verify everything looks right: homepage, notes, building, photos, about, dark/light toggle.
 
 ---
 
@@ -190,5 +180,5 @@ Go to the **Actions** tab and watch the "Deploy to GitHub Pages" workflow. Once 
 ## Next Steps
 
 - Read `README.md` for full content model and customization details
-- Add your first real post: `src/content/posts/my-first-post.md`
+- Add your first real note: `src/content/notes/my-first-note.md`
 - Consider enabling the `creating-new-content-type` skill if you want to add more content categories

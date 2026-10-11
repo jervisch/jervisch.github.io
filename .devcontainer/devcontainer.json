@@ -1,5 +1,5 @@
 {
-  "name": "jervvs.github.io dev",
+  "name": "jervisch.github.io dev",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
   "postCreateCommand": "npm install",
   "forwardPorts": [4321],

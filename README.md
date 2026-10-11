@@ -1,8 +1,8 @@
 # Personal Portfolio
 
-A minimal, extensible portfolio site built with [Astro](https://astro.build). Earth-tone palette, seaside-inspired ambient design, dark/light theming, and a content model where adding new work is as simple as writing a text file.
+A minimal, extensible portfolio site built with [Astro](https://astro.build). Earth-tone palette, editorial design, dark/light theming, and a content model where adding new work is as simple as writing a text file.
 
-**Live:** [jervvs.github.io](https://jervvs.github.io)
+**Live:** [jervisch.github.io](https://jervisch.github.io)
 
 **Want your own copy?** Click **Use this template** above — this gives you a clean copy with a single commit and none of my history. (Forking works too, but will carry over my full commit history.)
 
@@ -13,8 +13,8 @@ New to this? Start with SETUP.md for a step-by-step first run.
 ## Quick Start
 
 ```bash
-git clone https://github.com/jervvs/jervvs.github.io.git
-cd jervvs.github.io
+git clone https://github.com/jervisch/jervisch.github.io.git
+cd jervisch.github.io
 npm install
 npm run dev
 # Open http://localhost:4321
@@ -25,19 +25,19 @@ npm run dev
 ## Content Model
 
 All content lives in `src/content/`. Here, I have defined three content collection types:
-1. Posts
+1. Notes
 2. Projects
 3. Photos
 
 The content model is supposed to easily extensible / replaceable. Simply define a collection in `content.config.ts` and you can go from there. Then adding new content is as easy as creating a new Markdown file with the right frontmatter.
 
-### Writing (`src/content/posts/`)
+### Notes (`src/content/notes/`)
 
 Long-form essays and articles. Sorted by date, newest first.
 
 ```markdown
 ---
-title: "Your Post Title"
+title: "Your Note Title"
 date: 2026-06-20
 description: "Summary for the listing card (optional)."
 tags: ["topic", "another"]
@@ -52,14 +52,15 @@ Your content here. Full Markdown supported.
 | `title` | Yes | Appears everywhere — cards, page, RSS |
 | `date` | Yes | Controls sort order |
 | `description` | No | Card summary. If omitted, card shows no description |
-| `tags` | No | Clickable filter pills on the listing page |
+| `tags` | No | Powers the inline tag filter on the listing page |
 | `draft` | No | `true` = hidden from production, visible in `npm run dev` |
 
-**Listing page:** `/writing/` — cards with tag filtering. Paginated at 12 posts per page.
+**Listing page:** `/notes/` — an editorial index with inline tag filtering.
+Paginated at 12 posts per page.
 
-**Detail page:** `/writing/[slug]/` — centered prose with reading progress bar and share button.
+**Detail page:** `/notes/[slug]/` — prose with reading progress bar and share button.
 
-### Photography (`src/content/photos/`)
+### Photos (`src/content/photos/`)
 
 Individual photos grouped into collections (e.g., "Singapore", "Tokyo", "AI Art").
 
@@ -87,7 +88,8 @@ tags: ["sea", "morning"]
 | `collection` | Yes | Groups photos into sections on the gallery page |
 | `tags` | No | For future filtering |
 
-**Gallery page:** `/photography/` — masonry grid grouped by collection, with lightbox on click (keyboard navigable: arrows + Escape).
+**Gallery page:** `/photos/` — grid grouped by collection, with a lightbox on
+click (keyboard navigable: arrows + Escape).
 
 **Adding a new collection:** Just use a new `collection` name in any photo's frontmatter. It appears as a new section automatically.
 
@@ -113,41 +115,55 @@ Link to related writing or other work.
 | `title` | Yes | Project name |
 | `description` | Yes | Card summary |
 | `url` | No | External link — shows "View project ↗" on detail page |
-| `order` | No | `0` = pinned to homepage. `1` = default (listing only). Lower = first |
+| `order` | No | Sort key, ascending (defaults to `1`). The homepage shows the first three |
+| `year` | No | Shown alongside the entry on the homepage and detail page |
+| `status` | No | One of `growing`, `exploring`, `finished`, `paused` |
+| `cover` | No | Path to a cover image for the homepage entry |
 | `relatedWork` | No | Array of `"collection/id"` refs — renders as a date-sorted timeline on the detail page |
 | `tags` | No | Filterable on listing page |
 
-**Listing page:** `/projects/` — cards with tag filtering.
+**Listing page:** `/projects/` — an editorial index with inline tag filtering.
 
-**Detail page:** `/projects/[slug]/` — body content + auto-generated timeline of related work, sorted by date + optional external link.
+**Detail page:** `/projects/[slug]/` — body content + auto-generated timeline of
+related work, sorted by date + optional external link.
 
-**The `relatedWork` ref format:** `"collection/id"` where collection is `posts` or `projects`, and id is the filename without `.md`. The template automatically looks up the title and date from the referenced content. No data duplication.
+**The `relatedWork` ref format:** `"collection/id"` where collection is `notes` or `projects`, and id is the filename without `.md`. The template automatically looks up the title and date from the referenced content. No data duplication.
 
 ---
 
 ## Homepage
 
-The homepage shows a hero section, an animated wave divider, and category columns. Each column shows items with `order: 0` (pinned). To feature an item on the homepage, set `order: 0` in its frontmatter.
+The homepage is a single editorial column in this order:
 
-The Photography column shows collection names. The "Now" section reads from `src/content/now.md` — edit this file directly.
+1. **Hero** — your name, tagline, and location.
+2. **About** — a short statement, plus the "Now" line as one italic sentence,
+   with a link to the full About page. The Now line reads from `SITE.now` in
+   `src/config.ts` — edit that string directly.
+3. **Projects** — the first three projects by `order`, as numbered entries with
+   status and year.
+4. **Notes** — the five most recent notes, as a dated list.
+5. **Photos** — an asymmetric spread of three photographs, drawn from distinct
+   collections where possible.
+
+Each section has a heading with a link to its full listing page.
 
 ---
 
 ## Tag Filtering
 
-Writing and Projects listing pages have tag filtering. Tags in frontmatter automatically appear as filter pills. Clicking a tag filters cards instantly (client-side). The URL updates to `?tag=fitness` for sharing.
+Notes and Projects listing pages have tag filtering. Tags in frontmatter automatically appear as inline filter buttons. Clicking a tag filters the list instantly (client-side). The URL updates to `?tag=fitness` for sharing.
 
-Tags on cards are display-only — the filter bar at the top of the listing page is the interactive element.
+Tags on entries are display-only — the filter bar at the top of the listing page is the interactive element.
 
 ---
 
 ## Pagination
 
-Writing paginates automatically at 12 posts per page. Pages are generated at build time as static HTML: `/writing/`, `/writing/2/`, `/writing/3/`, etc.
+Notes paginates automatically at 12 entries per page. Pages are generated at build time as static HTML: `/notes/`, `/notes/2/`, `/notes/3/`, etc.
 
 ---
 
-## Media in Posts
+## Media in Notes
 
 ### Inline Image
 ```markdown
@@ -204,7 +220,7 @@ To add a completely new category (e.g., "Reviews"):
    { href: '/reviews/', label: 'Reviews' },
    ```
 
-6. **Add a homepage column** in `src/pages/index.astro` — query the collection and add a `<CategoryColumn>`.
+6. **Add a section to `src/pages/index.astro`** using the global `.section-header` / `.section-view-all` pair plus the relevant entry component — query the collection, then render it inside a `<section class="section">`.
 
 7. **Add content** — create `.md` files in `src/content/reviews/`.
 
@@ -232,8 +248,8 @@ Uses [Outfit](https://fonts.google.com/specimen/Outfit) via `@fontsource/outfit`
 ### Site Info
 Edit `src/config.ts` for name, tagline, bio, social links, and support/sponsorship links (e.g., Buy Me a Coffee).
 
-### "Now" Section
-Edit `src/content/now.md` directly.
+### "Now" Line
+Edit `SITE.now` in `src/config.ts` directly. It renders as one italic line in the About section of the homepage.
 
 ### About Page
 Edit `src/pages/about.astro` directly. Replace the gradient placeholder with your own photo.
@@ -263,31 +279,29 @@ Static HTML. `npm run build` → output in `dist/`. Works on Cloudflare Pages, V
 
 ```
 src/
-├── config.ts                 # Site config (name, social links)
+├── config.ts                 # Site config (name, tagline, now, social, support)
 ├── content.config.ts         # Content collection schemas
-├── styles/global.css         # Design tokens, animations, theme
+├── styles/global.css         # Design tokens, spacing, animations, theme
 ├── layouts/
-│   ├── BaseLayout.astro      # HTML shell, nav, theme, sea ambient
-│   └── PostLayout.astro      # Writing post layout
+│   ├── BaseLayout.astro      # HTML shell, nav, footer, theme
+│   └── NoteLayout.astro      # Notes layout
 ├── components/
 │   ├── Nav.astro             # Desktop + mobile navigation
-│   ├── Logo.astro            # PNG logo with text fallback
 │   ├── ThemeToggle.astro     # Dark/light toggle
-│   ├── WaveDivider.astro     # Animated SVG wave
-│   ├── SeaAmbient.astro      # Drifting ambient glow
-│   ├── CategoryColumn.astro  # Homepage category column
+│   ├── ProjectEntry.astro    # Numbered homepage entry
+│   ├── NoteList.astro        # Dated editorial index
+│   ├── PhotoFeature.astro    # Asymmetric homepage photo spread
+│   ├── GalleryGrid.astro     # Photo archive grid
+│   ├── Lightbox.astro        # Progressive-enhancement viewer
+│   ├── Timeline.astro        # Related-work timeline on detail pages
 │   ├── Footer.astro          # Site-wide footer with support link
-│   ├── ContentCard.astro     # Listing card
-│   ├── GalleryGrid.astro     # Photography masonry grid
-│   ├── Lightbox.astro        # Photo lightbox
 │   ├── ReadingProgress.astro # Scroll progress bar
 │   └── ShareButton.astro     # Web Share / copy link
 ├── content/
-│   ├── posts/                # Writing (Markdown)
-│   ├── photos/               # Photography entries
-│   ├── projects/             # Project entries
-│   └── now.md                # "Now" section
-└── pages/                    # Routes
+│   ├── notes/                # Notes (Markdown)
+│   ├── photos/               # Photo entries
+│   └── projects/             # Project entries
+└── pages/                    # Routes: /, /projects/, /notes/, /photos/, /about/
 ```
 
 ## License

@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ContentCard from '../../components/ContentCard.astro';
 import { getCollection } from 'astro:content';
 
 const projects = (await getCollection('projects'))
@@ -9,91 +8,232 @@ const projects = (await getCollection('projects'))
 const allTags = [...new Set(projects.flatMap(p => p.data.tags))].sort();
 ---
 
-<BaseLayout title="Projects" description="Things I've built.">
-  <a href="/" class="back-link">← Home</a>
-  <h1 class="listing-title">Projects</h1>
+<BaseLayout title="Projects" description="What I'm making, and what's still growing.">
+  <header class="archive-head">
+    <h1 class="type-display">Projects</h1>
+    <p class="archive-intro">
+      What I'm making, and what's still growing.
+      Some finished, some paused, some still a sketch.
+    </p>
+  </header>
 
-  <div class="listing-header">
-    <p class="listing-subtitle">Things I've built.</p>
-    {allTags.length > 0 && (
-      <div class="tag-filter" id="tag-filter">
-        <button class="tag-pill active" data-tag="">All</button>
-        {allTags.map(tag => (
-          <button class="tag-pill" data-tag={tag}>{tag}</button>
-        ))}
-      </div>
-    )}
-  </div>
+  {allTags.length > 0 && (
+    <div class="tag-filter" id="tag-filter" role="group" aria-label="Filter Projects by tag">
+      <button class="tag active" data-tag="" aria-pressed="true">All</button>
+      {allTags.map(tag => (
+        <button class="tag" data-tag={tag} aria-pressed="false">{tag}</button>
+      ))}
+    </div>
+  )}
 
-  <div class="list-cards" id="post-list">
-    {projects.map(project => (
-      <div class="card-wrapper" data-tags={project.data.tags.join(',')}>
-        <ContentCard
-          title={project.data.title}
-          href={`/projects/${project.id}/`}
-          description={project.data.description}
-          tags={project.data.tags}
-        />
-      </div>
+  <h2 class="type-label index-label">Index</h2>
+
+  <ol class="archive" id="projects-list">
+    {projects.map((project, i) => (
+      <li class="archive-row" data-tags={project.data.tags.join(',')}>
+        <a href={`/projects/${project.id}/`} class="archive-link">
+          <span class="archive-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <span class="archive-main">
+            <span class="archive-title">{project.data.title}</span>
+            <span class="archive-desc">{project.data.description}</span>
+          </span>
+          <span class="archive-meta">
+            {project.data.status && <span class="archive-status">{project.data.status}</span>}
+            {project.data.year && <span class="archive-year">{project.data.year}</span>}
+          </span>
+        </a>
+      </li>
     ))}
-  </div>
+  </ol>
 
-  <p class="no-results" id="no-results" style="display: none;">No projects with this tag.</p>
+  <p class="no-results" id="no-results" hidden>No Projects with this tag.</p>
 </BaseLayout>
 
 <style>
-  .listing-title { font-size: 28px; font-weight: 200; letter-spacing: -0.03em; margin-bottom: 8px; }
-  .listing-header { margin-bottom: 28px; }
-  .listing-subtitle { font-size: 14px; font-weight: 300; color: var(--text-muted); margin-bottom: 12px; }
-
-  .tag-filter { display: flex; gap: 4px; flex-wrap: wrap; align-items: center; }
-  .tag-pill {
-    font-family: 'Outfit', sans-serif; font-size: 10px; font-weight: 300;
-    color: var(--text-muted); padding: 2px 8px; border: none; border-radius: 8px;
-    background: none; cursor: pointer; transition: all 0.2s;
+  .archive-head {
+    padding-block: var(--section-pad) var(--heading-gap);
+    max-width: 40ch;
   }
-  .tag-pill:hover { color: var(--text); background: var(--border); }
-  .tag-pill.active { background: var(--text); color: var(--bg); }
 
-  .list-cards { display: flex; flex-direction: column; gap: 14px; }
-  .card-wrapper.hidden { display: none; }
-  .no-results { font-size: 14px; font-weight: 300; color: var(--text-muted); padding: 40px 0; text-align: center; }
+  .archive-intro {
+    margin-top: 28px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+  }
+
+  /* ─── Tag filter — inline text, not app chrome ─── */
+  .tag-filter {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-bottom: var(--heading-gap);
+  }
+
+  .tag {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    padding: 0 0 4px;
+    cursor: pointer;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .tag:hover { color: var(--text); }
+  .tag.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  .index-label {
+    margin: 0 0 20px;
+  }
+
+  /* ─── Archive index ─── */
+  .archive {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .archive-row {
+    border-top: 1px solid var(--border);
+    transition: border-color 0.4s, opacity 0.2s;
+  }
+
+  .archive-row:last-child {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .archive-row[hidden] {
+    display: none;
+  }
+
+  .archive-link {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr) 10rem;
+    gap: var(--grid-gap);
+    align-items: baseline;
+    padding: 30px 0;
+    transition: color 0.2s;
+  }
+
+  .archive-num {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    color: var(--text-muted);
+  }
+
+  .archive-main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .archive-title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(1.375rem, 2.2vw, 1.75rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    transition: color 0.2s;
+  }
+
+  .archive-link:hover .archive-title {
+    color: var(--accent);
+  }
+
+  .archive-desc {
+    font-size: 0.9375rem;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    max-width: 52ch;
+  }
+
+  .archive-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .archive-status,
+  .archive-year {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .no-results {
+    padding: 48px 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.125rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 700px) {
+    .archive-link {
+      grid-template-columns: 2.5rem minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .archive-meta {
+      grid-column: 2;
+      flex-direction: row;
+      align-items: baseline;
+      gap: 12px;
+      text-align: left;
+    }
+  }
 </style>
 
 <script>
   function initTagFilter() {
     const filterBar = document.getElementById('tag-filter');
-    const postList = document.getElementById('post-list');
+    const list = document.getElementById('projects-list');
     const noResults = document.getElementById('no-results');
-    if (!filterBar || !postList) return;
+    if (!filterBar || !list) return;
 
-    const pills = filterBar.querySelectorAll('.tag-pill');
-    const cards = postList.querySelectorAll('.card-wrapper');
+    const tags = filterBar.querySelectorAll<HTMLButtonElement>('.tag');
+    const rows = list.querySelectorAll<HTMLElement>('.archive-row');
 
-    function filterByTag(tag: string) {
-      let visibleCount = 0;
-      cards.forEach(card => {
-        const cardTags = (card as HTMLElement).getAttribute('data-tags') || '';
-        const matches = !tag || cardTags.split(',').includes(tag);
-        (card as HTMLElement).classList.toggle('hidden', !matches);
-        if (matches) visibleCount++;
+    function apply(tag: string) {
+      let visible = 0;
+      rows.forEach(row => {
+        const rowTags = row.dataset.tags || '';
+        const match = !tag || rowTags.split(',').includes(tag);
+        row.hidden = !match;
+        if (match) visible++;
       });
-      pills.forEach(pill => {
-        pill.classList.toggle('active', (pill as HTMLElement).getAttribute('data-tag') === tag);
+
+      tags.forEach(btn => {
+        const isActive = btn.dataset.tag === tag;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
       });
-      if (noResults) (noResults as HTMLElement).style.display = visibleCount === 0 ? 'block' : 'none';
+
+      if (noResults) noResults.hidden = visible > 0;
 
       const url = new URL(window.location.href);
-      if (tag) { url.searchParams.set('tag', tag); } else { url.searchParams.delete('tag'); }
+      if (tag) url.searchParams.set('tag', tag);
+      else url.searchParams.delete('tag');
       history.replaceState({}, '', url.toString());
     }
 
-    pills.forEach(pill => {
-      pill.addEventListener('click', () => filterByTag((pill as HTMLElement).getAttribute('data-tag') || ''));
-    });
-
-    const urlTag = new URL(window.location.href).searchParams.get('tag');
-    if (urlTag) filterByTag(urlTag);
+    tags.forEach(btn => btn.addEventListener('click', () => apply(btn.dataset.tag || '')));
+    apply(new URL(window.location.href).searchParams.get('tag') || '');
   }
 
   initTagFilter();

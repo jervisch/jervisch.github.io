@@ -71,7 +71,7 @@ Each one is just a folder of text files. Adding a new photo means creating a tex
 
 ## What It Costs
 
-**Nothing.** The site is hosted on GitHub Pages, which is free. The domain (`jervvs.github.io`) is free. The tools (Astro, the text editor) are free. There are no monthly fees, no subscriptions, no vendor lock-in.
+**Nothing.** The site is hosted on GitHub Pages, which is free. The domain (`jervisch.github.io`) is free. The tools (Astro, the text editor) are free. There are no monthly fees, no subscriptions, no vendor lock-in.
 
 If I ever want a custom domain like `jervischan.com`, the only cost is the domain registration (~$12/year). Everything else stays free.
 
@@ -85,6 +85,6 @@ None of this required a designer. It required *taste* — picking a color palett
 
 If you have things to share — writing, photography, projects, ideas — and you want a home for them that you actually own, I think the answer is yes.
 
-The code for this site is [on GitHub](https://github.com/jervvs/jervvs.github.io). You can fork it, replace my content with yours, change the colors, and have your own portfolio site running in an afternoon. The README explains everything step by step.
+The code for this site is [on GitHub](https://github.com/jervisch/jervisch.github.io). You can fork it, replace my content with yours, change the colors, and have your own portfolio site running in an afternoon. The README explains everything step by step.
 
 The hardest part isn't the technology. It's deciding to start.

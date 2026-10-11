@@ -6,5 +6,6 @@ caption: "The organized chaos"
 location: "Shibuya, Tokyo"
 size: "wide"
 collection: "Tokyo"
+cover: true
 tags: ["city", "street", "night"]
 ---

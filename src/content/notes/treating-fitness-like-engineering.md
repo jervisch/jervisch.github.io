@@ -35,5 +35,3 @@ It's not optimal in some theoretical sense. But it's **executable** — I can do
 The people who get fit aren't the ones with the best plans. They're the ones who follow a good-enough plan consistently. This is the same insight that makes reliable infrastructure: **boring, consistent execution beats heroic effort every time.**
 
 Build a system you'll actually follow. Remove decisions. Embrace constraints. Trust the boring process.
-
-Related: [90-Day Recomposition](/projects/90-day-recomp/)
