@@ -39,6 +39,15 @@
   --toggle-bg: #DED9CC;
   --toggle-dot: #25241F;
 
+  /* Hero shader palette — a moon over a sand dune.
+     Disc is near-opaque: at low alpha it composites toward the cream paper
+     and a "black" moon washes out to grey.
+     --hero-line is the colour lines render at, not a raw ink value. */
+  --hero-disc: #25241F;
+  --hero-disc-alpha: 0.95;
+  --hero-line: #EDD3A3;
+  --hero-shine: #EDD3A3;
+
   /* type */
   --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
   --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -83,6 +92,14 @@
   --grain-opacity: 0.035;
   --toggle-bg: #3A382D;
   --toggle-dot: #E8E4D8;
+
+  /* Hero shader palette — hot vermillion disc over cool blue contours.
+     --hero-line is pre-mixed against the old dark seed so the rendered
+     line colour is unchanged by the move to ink-seeded compositing. */
+  --hero-disc: #FF3C30;
+  --hero-disc-alpha: 0.7;
+  --hero-line: #516F83;
+  --hero-shine: #82B3D6;
 }
 
 /* ─── RESET ─── */
@@ -354,7 +371,7 @@ body::after {
   text-decoration-color: var(--accent);
 }
 
-/* Arrow link — "→ All notes" */
+/* Arrow link — "→ All Notes" */
 .arrow-link {
   font-family: var(--font-sans);
   font-weight: 400;
@@ -378,6 +395,35 @@ body::after {
 
 .arrow-link:hover .arrow {
   transform: translateX(4px);
+}
+
+/* Section header — a title on the left, a "view everything" link on the right.
+   Lives here rather than in a page's scoped block so every component that
+   renders a section header gets the same pairing. */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--heading-gap);
+}
+
+.section-header .type-title {
+  margin: 0;
+}
+
+/* Quiet meta link — "All Notes →", "All Projects →", "All Photos →" */
+.section-view-all {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.section-view-all:hover {
+  color: var(--accent);
 }
 
 .back-link {
@@ -409,7 +455,7 @@ body::after {
 }
 
 /* ─── PROSE ───
-   Shared reading typography for note and thing bodies.
+   Shared reading typography for note and project bodies.
    One source of truth so long-form pages stay consistent. */
 .prose {
   max-width: 660px;

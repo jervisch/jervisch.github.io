@@ -1,31 +1,31 @@
 ---
 import { getCollection, render } from 'astro:content';
-import PostLayout from '../../layouts/PostLayout.astro';
+import NoteLayout from '../../layouts/NoteLayout.astro';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('posts');
-  return posts
-    .filter(post => !post.data.draft || import.meta.env.DEV)
-    .map(post => ({
-      params: { slug: post.id },
-      props: { post },
+  const notes = await getCollection('notes');
+  return notes
+    .filter(note => !note.data.draft || import.meta.env.DEV)
+    .map(note => ({
+      params: { slug: note.id },
+      props: { note },
     }));
 }
 
-const { post } = Astro.props;
-const { Content } = await render(post);
+const { note } = Astro.props;
+const { Content } = await render(note);
 
 // Estimate reading time
-const words = post.body ? post.body.split(/\s+/).length : 0;
+const words = note.body ? note.body.split(/\s+/).length : 0;
 const minutesRead = Math.max(1, Math.ceil(words / 250));
 ---
 
-<PostLayout
-  title={post.data.title}
-  date={post.data.date}
-  tags={post.data.tags}
+<NoteLayout
+  title={note.data.title}
+  date={note.data.date}
+  tags={note.data.tags}
   minutesRead={minutesRead}
-  description={post.data.description}
+  description={note.data.description}
 >
   <Content />
-</PostLayout>
+</NoteLayout>

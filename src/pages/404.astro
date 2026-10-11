@@ -1,12 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-const links = [
-  { href: '/building/', label: 'Building' },
-  { href: '/notes/', label: 'Notes' },
-  { href: '/photos/', label: 'Photos' },
-  { href: '/about/', label: 'About' },
-];
+import { NAV_LINKS } from '../config';
 ---
 
 <BaseLayout title="Not Found">
@@ -19,7 +13,7 @@ const links = [
 
   <nav class="not-found-links" aria-label="Site sections">
     <ul>
-      {links.map(link => (
+      {NAV_LINKS.map(link => (
         <li>
           <a href={link.href} class="arrow-link">
             {link.label}

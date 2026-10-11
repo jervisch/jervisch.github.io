@@ -2,15 +2,15 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const things = (await getCollection('projects'))
+const projects = (await getCollection('projects'))
   .sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
 
-const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
+const allTags = [...new Set(projects.flatMap(p => p.data.tags))].sort();
 ---
 
-<BaseLayout title="Building" description="What I'm making, and what's still growing.">
+<BaseLayout title="Projects" description="What I'm making, and what's still growing.">
   <header class="archive-head">
-    <h1 class="type-display">Building</h1>
+    <h1 class="type-display">Projects</h1>
     <p class="archive-intro">
       What I'm making, and what's still growing.
       Some finished, some paused, some still a sketch.
@@ -18,7 +18,7 @@ const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
   </header>
 
   {allTags.length > 0 && (
-    <div class="tag-filter" id="tag-filter" role="group" aria-label="Filter building by tag">
+    <div class="tag-filter" id="tag-filter" role="group" aria-label="Filter Projects by tag">
       <button class="tag active" data-tag="" aria-pressed="true">All</button>
       {allTags.map(tag => (
         <button class="tag" data-tag={tag} aria-pressed="false">{tag}</button>
@@ -28,25 +28,25 @@ const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
 
   <h2 class="type-label index-label">Index</h2>
 
-  <ol class="archive" id="building-list">
-    {things.map((thing, i) => (
-      <li class="archive-row" data-tags={thing.data.tags.join(',')}>
-        <a href={`/building/${thing.id}/`} class="archive-link">
+  <ol class="archive" id="projects-list">
+    {projects.map((project, i) => (
+      <li class="archive-row" data-tags={project.data.tags.join(',')}>
+        <a href={`/projects/${project.id}/`} class="archive-link">
           <span class="archive-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
           <span class="archive-main">
-            <span class="archive-title">{thing.data.title}</span>
-            <span class="archive-desc">{thing.data.description}</span>
+            <span class="archive-title">{project.data.title}</span>
+            <span class="archive-desc">{project.data.description}</span>
           </span>
           <span class="archive-meta">
-            {thing.data.status && <span class="archive-status">{thing.data.status}</span>}
-            {thing.data.year && <span class="archive-year">{thing.data.year}</span>}
+            {project.data.status && <span class="archive-status">{project.data.status}</span>}
+            {project.data.year && <span class="archive-year">{project.data.year}</span>}
           </span>
         </a>
       </li>
     ))}
   </ol>
 
-  <p class="no-results" id="no-results" hidden>No building with this tag.</p>
+  <p class="no-results" id="no-results" hidden>No Projects with this tag.</p>
 </BaseLayout>
 
 <style>
@@ -202,7 +202,7 @@ const allTags = [...new Set(things.flatMap(t => t.data.tags))].sort();
 <script>
   function initTagFilter() {
     const filterBar = document.getElementById('tag-filter');
-    const list = document.getElementById('building-list');
+    const list = document.getElementById('projects-list');
     const noResults = document.getElementById('no-results');
     if (!filterBar || !list) return;
 

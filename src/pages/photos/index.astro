@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-import { getPhotoGradient } from '../../lib/photoGradient';
+import { getPhotoGradient, photoExists } from '../../lib/photoGradient';
 
 const photos = (await getCollection('photos'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
@@ -13,14 +13,19 @@ for (const photo of photos) {
   collections.get(key)!.push(photo);
 }
 
+/** The photo that represents a collection: an explicit `cover: true` if one
+    is set, otherwise the newest by date (the array arrives date-sorted). */
+const pickCover = (collectionPhotos: typeof photos) =>
+  collectionPhotos.find(p => p.data.cover) ?? collectionPhotos[0];
+
 const collectionEntries = Array.from(collections.entries()).map(([name, collectionPhotos]) => {
-  const firstPhoto = collectionPhotos[0];
+  const firstPhoto = pickCover(collectionPhotos);
   return {
     name,
     count: collectionPhotos.length,
     heroImage: firstPhoto.data.image,
+    heroExists: photoExists(firstPhoto.data.image),
     heroTitle: firstPhoto.data.title,
-    locations: [...new Set(collectionPhotos.map(p => p.data.location).filter(Boolean))],
     dateRange: (() => {
       const dates = collectionPhotos.map(p => p.data.date);
       const newest = new Date(Math.max(...dates.map(d => d.valueOf())));
@@ -46,8 +51,9 @@ const collectionEntries = Array.from(collections.entries()).map(([name, collecti
     {collectionEntries.map(collection => (
       <article class="collection-card" id={collection.name.toLowerCase().replace(/\s+/g, '-')}>
         <a href={`/photos/${collection.name.toLowerCase().replace(/\s+/g, '-')}/`} class="collection-link">
-          <div class="collection-hero" style={`background: ${getPhotoGradient(collection.heroImage)};`}>
-            {collection.heroImage && <img src={collection.heroImage} alt={collection.heroTitle} loading="lazy" />}
+<div class="collection-hero" style={`background: ${getPhotoGradient(collection.heroImage)};`}>
+              {collection.heroExists && <img src={collection.heroImage} alt={collection.heroTitle} loading="lazy" />}
+            </div>
           </div>
           <div class="collection-info">
             <h2 class="collection-name">{collection.name}</h2>
@@ -55,9 +61,6 @@ const collectionEntries = Array.from(collections.entries()).map(([name, collecti
               <span class="collection-date">{collection.dateRange}</span>
               <span class="collection-count">{collection.count} {collection.count === 1 ? 'photo' : 'photos'}</span>
             </p>
-            {collection.locations.length > 0 && (
-              <p class="collection-locations">{collection.locations.join(' · ')}</p>
-            )}
           </div>
         </a>
       </article>
@@ -83,22 +86,16 @@ const collectionEntries = Array.from(collections.entries()).map(([name, collecti
 
   .collection-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--grid-gap);
   }
 
+  /* No card surface or border — the photograph is the object, and the text
+     below it sits directly on the page. A bordered panel is what created
+     the pale strip under each image. */
   .collection-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
-    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-  }
-
-  .collection-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
   }
 
   .collection-link {
@@ -110,6 +107,7 @@ const collectionEntries = Array.from(collections.entries()).map(([name, collecti
   .collection-hero {
     aspect-ratio: 16 / 9;
     overflow: hidden;
+    border-radius: 8px;
     background-size: cover;
     background-position: center;
   }
@@ -118,50 +116,42 @@ const collectionEntries = Array.from(collections.entries()).map(([name, collecti
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s;
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  .collection-card:hover .collection-hero img {
-    transform: scale(1.05);
+  .collection-link:hover .collection-hero img {
+    transform: scale(1.04);
   }
 
   .collection-info {
-    padding: 24px;
+    padding-top: 16px;
   }
 
   .collection-name {
     font-family: var(--font-serif);
     font-weight: 300;
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
+    font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+    line-height: 1.25;
+    letter-spacing: -0.018em;
     color: var(--text);
-    margin: 0 0 8px;
+    margin: 0 0 6px;
     transition: color 0.2s;
   }
 
-  .collection-card:hover .collection-name {
+  .collection-link:hover .collection-name {
     color: var(--accent);
   }
 
   .collection-meta {
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 4px 12px;
     font-size: 0.6875rem;
     font-weight: 400;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 8px;
-  }
-
-  .collection-locations {
-    font-size: 0.8125rem;
-    font-weight: 300;
-    letter-spacing: 0.06em;
-    color: var(--text-muted);
-    line-height: 1.5;
+    margin: 0;
   }
 
   @media (max-width: 700px) {

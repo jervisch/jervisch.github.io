@@ -17,10 +17,18 @@ Never commit real personal data on this user's behalf without confirming it's ac
 - Preview: `npm run preview`
 
 ## Content Model
-All content lives in `src/content/` as Markdown with YAML frontmatter:
-- **Posts** (`src/content/posts/`) — published as **Notes**: title, date, description?, tags?, draft?, series?, order?
-- **Projects** (`src/content/projects/`) — published as **Building**: title, description, url?, order? (ascending; the homepage shows the first three), year?, status? (growing/exploring/finished/paused), cover?, relatedWork[], tags?
-- **Photos** (`src/content/photos/`) — published as **Photos**: title, date, image, caption?, location?, size? (square/tall/wide), collection, tags?
+All content lives in `src/content/` as Markdown with YAML frontmatter. Folder
+name, collection key, route, and headings all use the same word:
+- **Notes** (`src/content/notes/`) — published at `/notes/`: title, date, description?, tags?, draft?, series?, order?
+- **Projects** (`src/content/projects/`) — published at `/projects/`: title, description, url?, order? (ascending; the homepage shows the first three), year?, status? (growing/exploring/finished/paused), cover?, relatedWork[], tags?
+- **Photos** (`src/content/photos/`) — published at `/photos/`: title, date, image, caption?, location?, size? (square/tall/wide), collection, cover?, tags?
+
+### Collection cover images
+A collection's main image — the one shown on the homepage carousel and the
+`/photos` grid — is the photo with `cover: true`. Mark exactly one photo per
+collection; if none is marked, the site falls back to the newest by date. The
+flag is honoured in both `PhotosCarousel.astro` and `pages/photos/index.astro`,
+so setting it changes both surfaces at once.
 - **Now**: a single short line at `SITE.now` in `src/config.ts`, rendered inside About.
   It is state of mind, not a list of projects.
 
@@ -31,9 +39,9 @@ Files prefixed with `_` are templates and are never published.
 2. For new collections:
    - Define schema in `src/content.config.ts`
    - Create folder `src/content/<collectionname>/`
-   - Create list page `src/pages/<collectionname>/index.astro` (copy from building)
-   - Create detail page `src/pages/<collectionname>/[...slug].astro` (copy from building)
-   - Add nav link in `src/components/Nav.astro`
+   - Create list page `src/pages/<collectionname>/index.astro` (copy from projects)
+   - Create detail page `src/pages/<collectionname>/[...slug].astro` (copy from projects)
+   - Add an entry to `NAV_LINKS` in `src/config.ts`
    - Add homepage section in `src/pages/index.astro`
    - Add `relatedWork: ["collectionname/slug"]` to a project to feature that entry in its timeline
 
@@ -45,7 +53,7 @@ Files prefixed with `_` are templates and are never published.
 - Section rhythm: `--section-pad` and `--heading-gap` in `global.css` drive every
   vertical boundary. Do not add ad-hoc `padding-block` values to individual sections.
   Two exceptions are intentional: `.hero`'s bottom offset, which positions the
-  statement inside a viewport-height panel, and `BuildingEntry`'s item spacing, which
+  statement inside a viewport-height panel, and `ProjectEntry`'s item spacing, which
   separates entries rather than sections.
 - Light/dark theme: Toggles `data-theme` attribute on `<html>`; persists via `localStorage`
 - Theme toggle component: `src/components/ThemeToggle.astro`
@@ -57,18 +65,18 @@ themes. `--text-muted` and `--accent` carry small meta text, so they are held
 near 4.8:1. If you change a token, re-check contrast rather than assuming.
 
 ## Routes
-Public URLs use the editorial vocabulary; the collections behind them are unchanged.
-- `/building/` ← `src/content/projects/`
-- `/notes/` ← `src/content/posts/`
+Folder, collection key, route, and headings all use the same word:
+- `/projects/` ← `src/content/projects/`
+- `/notes/` ← `src/content/notes/`
 - `/photos/` ← `src/content/photos/`
 
 There are no redirects. The site went live 2026-08-31 and has no inbound links worth
 preserving, so a renamed route is simply gone. When you rename one, update
-`src/components/Nav.astro`, internal links, `src/components/Timeline.astro`'s
-`urlPrefixes` map, and `src/pages/rss.xml.ts`.
+`NAV_LINKS` in `src/config.ts`, internal links, `src/components/Timeline.astro`'s
+`REF_COLLECTIONS` list, and `src/pages/rss.xml.ts`.
 
 ## Configuration
-- Site metadata (name, tagline, location, social links): `src/config.ts`
+- Site metadata (name, tagline, location, social links) and `NAV_LINKS`: `src/config.ts`
 - Astro config: `astro.config.mjs` (site URL, integrations, markdown syntax highlighting)
 - TypeScript config: `tsconfig.json` (extends `astro/tsconfigs/strict` with path alias `@/*` → `src/*`)
 
@@ -89,10 +97,15 @@ preserving, so a renamed route is simply gone. When you rename one, update
 - Sitemap: `@astrojs/sitemap` integration
 
 ## Component Inventory
-Editorial sections (homepage): `SectionHeading`, `BuildingEntry`, `NoteList`,
-`PhotoFeature`
+Editorial sections (homepage): `HeroAnimation`, `ProjectEntry`, `NoteList`,
+`PhotosCarousel`
 Retained: `Nav`, `Footer`, `GalleryGrid`, `Lightbox`, `Timeline`, `ThemeToggle`,
 `ReadingProgress`, `ShareButton`
+
+Section headings on the homepage are inlined in `src/pages/index.astro` and use
+the global `.section-header` / `.section-view-all` pair from `global.css`. Do not
+reintroduce a heading-owning component — `PhotosCarousel` in particular renders
+photos only and must not own its own heading.
 
 ## File Extensions
 - `.astro`: Astro components (pages, layouts, UI components)

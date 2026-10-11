@@ -1,41 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SectionHeading from '../components/SectionHeading.astro';
-import BuildingEntry from '../components/BuildingEntry.astro';
+import ProjectEntry from '../components/ProjectEntry.astro';
 import NoteList from '../components/NoteList.astro';
-import PhotoFeature from '../components/PhotoFeature.astro';
+import PhotosCarousel from '../components/PhotosCarousel.astro';
+import HeroAnimation from '../components/HeroAnimation.astro';
 import { SITE } from '../config';
 import { getCollection } from 'astro:content';
 
-const notes = (await getCollection('posts'))
-  .filter(p => !p.data.draft)
+const notes = (await getCollection('notes'))
+  .filter(n => !n.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-const things = (await getCollection('projects'))
+const projects = (await getCollection('projects'))
   .sort((a, b) => a.data.order - b.data.order || a.data.title.localeCompare(b.data.title));
-
-const photos = (await getCollection('photos'))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-// Pick a spread of photographs rather than the three newest from one trip.
-const featurePhotos: typeof photos = [];
-const seenCollections = new Set<string>();
-for (const photo of photos) {
-  if (featurePhotos.length >= 3) break;
-  const key = photo.data.collection;
-  if (seenCollections.has(key)) continue;
-  seenCollections.add(key);
-  featurePhotos.push(photo);
-}
-// If every photo shares one collection, fall back to simply taking the newest.
-const chosenPhotos = featurePhotos.length >= 2
-  ? featurePhotos
-  : photos.slice(0, 3);
 ---
 
 <BaseLayout currentPath="/" home>
   <!-- ─── Hero ─── -->
   <section class="hero">
+    <HeroAnimation />
     <h1 class="hero-name type-display">
       I make things,<br />
       think about systems,<br />
@@ -46,29 +29,34 @@ const chosenPhotos = featurePhotos.length >= 2
     </p>
   </section>
 
-  <!-- ─── Building ─── -->
-  <section class="section building-section">
-    <SectionHeading title="Building" href="/building/" />
-    {things.length > 0 && (
-      <div class="things-list">
-        {things.slice(0, 3).map((thing, i) => (
-          <BuildingEntry
-            number={i + 1}
-            title={thing.data.title}
-            description={thing.data.description}
-            href={`/building/${thing.id}/`}
-            cover={thing.data.cover}
-            tags={thing.data.tags}
-            flip={i % 2 === 1}
-          />
-        ))}
-      </div>
-    )}
+  <!-- ─── Projects ─── -->
+  <section class="projects-section">
+    <header class="section-header">
+      <h2 class="type-title">Projects</h2>
+      <a href="/projects/" class="section-view-all">All Projects →</a>
+    </header>
+
+    <div class="projects-cards">
+      {projects.slice(0, 3).map((project, i) => (
+        <ProjectEntry
+          number={i + 1}
+          title={project.data.title}
+          description={project.data.description}
+          href={`/projects/${project.id}/`}
+          cover={project.data.cover}
+          tags={project.data.tags}
+          flip={i % 2 === 1}
+        />
+      ))}
+    </div>
   </section>
 
   <!-- ─── Notes ─── -->
   <section class="section notes-section">
-    <SectionHeading title="Notes" href="/notes/" />
+    <header class="section-header">
+      <h2 class="type-title">Notes</h2>
+      <a href="/notes/" class="section-view-all">All Notes →</a>
+    </header>
     {notes.length > 0 && (
       <NoteList
         notes={notes.slice(0, 5).map(note => ({
@@ -82,15 +70,11 @@ const chosenPhotos = featurePhotos.length >= 2
 
   <!-- ─── Photos ─── -->
   <section class="section photos-section">
-    <SectionHeading title="Photos" href="/photos/" linkLabel="All photos" />
-    <PhotoFeature
-      photos={chosenPhotos.map(photo => ({
-        title: photo.data.title,
-        image: photo.data.image,
-        location: photo.data.location,
-        caption: photo.data.caption,
-      }))}
-    />
+    <header class="section-header">
+      <h2 class="type-title">Photos</h2>
+      <a href="/photos/" class="section-view-all">All Photos →</a>
+    </header>
+    <PhotosCarousel />
   </section>
 </BaseLayout>
 
@@ -102,56 +86,66 @@ const chosenPhotos = featurePhotos.length >= 2
     flex-direction: column;
     justify-content: flex-end;
     padding-bottom: clamp(48px, 7vw, 88px);
+    position: relative;
+    z-index: 1;
   }
 
   .hero-name {
     margin: 0;
+    position: relative;
+    z-index: 2;
   }
 
   .hero-meta {
     margin-top: 40px;
+    position: relative;
+    z-index: 2;
   }
 
-  /* ─── Sections ─── */
-  .section {
+  .hero-animation {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ─── Projects Section ─── */
+  .projects-section {
     min-height: 100svh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    padding-top: var(--section-pad);
+    justify-content: space-between;
+    padding: var(--section-pad) var(--page-pad) calc(var(--section-pad) + 60px);
   }
 
-  .section .section-heading {
-    margin-bottom: var(--heading-gap);
-  }
-
-  /* Building section - alternating layout */
-  .building-section .things-list {
+  .projects-cards {
     display: flex;
     flex-direction: column;
     gap: 0;
     flex: 1;
   }
 
-  .building-section .feature {
-    min-height: 100svh;
-  }
-
-  /* Notes section */
-  .notes-section .note-list {
-    flex: 1;
-  }
-
-  /* Photos section */
-  .photos-section .photo-feature {
-    flex: 1;
+  .projects-cards .feature {
+    min-height: calc((100svh - 200px) / 3);
   }
 
   @media (max-width: 700px) {
-    .section {
+    .projects-section {
       min-height: auto;
-      padding-top: var(--section-pad);
-      padding-bottom: var(--section-pad);
+      padding: var(--section-pad) var(--page-pad) calc(var(--section-pad) + 40px);
     }
+
+    .projects-cards .feature {
+      min-height: auto;
+    }
+  }
+
+  /* ─── Section Headers ───
+     .section-header and .section-view-all are global — see global.css. */
+
+  /* ─── Notes + Photos Sections — compact gap after Projects ─── */
+  .notes-section,
+  .photos-section {
+    margin-top: calc(var(--section-pad) * 0.5);
   }
 </style>

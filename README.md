@@ -25,19 +25,19 @@ npm run dev
 ## Content Model
 
 All content lives in `src/content/`. Here, I have defined three content collection types:
-1. Posts
+1. Notes
 2. Projects
 3. Photos
 
 The content model is supposed to easily extensible / replaceable. Simply define a collection in `content.config.ts` and you can go from there. Then adding new content is as easy as creating a new Markdown file with the right frontmatter.
 
-### Notes (`src/content/posts/`)
+### Notes (`src/content/notes/`)
 
 Long-form essays and articles. Sorted by date, newest first.
 
 ```markdown
 ---
-title: "Your Post Title"
+title: "Your Note Title"
 date: 2026-06-20
 description: "Summary for the listing card (optional)."
 tags: ["topic", "another"]
@@ -93,7 +93,7 @@ click (keyboard navigable: arrows + Escape).
 
 **Adding a new collection:** Just use a new `collection` name in any photo's frontmatter. It appears as a new section automatically.
 
-### Building (`src/content/projects/`)
+### Projects (`src/content/projects/`)
 
 Discrete things you've built. Each has a detail page with body content.
 
@@ -122,12 +122,12 @@ Link to related writing or other work.
 | `relatedWork` | No | Array of `"collection/id"` refs — renders as a date-sorted timeline on the detail page |
 | `tags` | No | Filterable on listing page |
 
-**Listing page:** `/building/` — an editorial index with inline tag filtering.
+**Listing page:** `/projects/` — an editorial index with inline tag filtering.
 
-**Detail page:** `/building/[slug]/` — body content + auto-generated timeline of
+**Detail page:** `/projects/[slug]/` — body content + auto-generated timeline of
 related work, sorted by date + optional external link.
 
-**The `relatedWork` ref format:** `"collection/id"` where collection is `posts` or `projects`, and id is the filename without `.md`. The template automatically looks up the title and date from the referenced content. No data duplication.
+**The `relatedWork` ref format:** `"collection/id"` where collection is `notes` or `projects`, and id is the filename without `.md`. The template automatically looks up the title and date from the referenced content. No data duplication.
 
 ---
 
@@ -139,9 +139,9 @@ The homepage is a single editorial column in this order:
 2. **About** — a short statement, plus the "Now" line as one italic sentence,
    with a link to the full About page. The Now line reads from `SITE.now` in
    `src/config.ts` — edit that string directly.
-3. **Building** — the first three projects by `order`, as numbered entries with
+3. **Projects** — the first three projects by `order`, as numbered entries with
    status and year.
-4. **Notes** — the five most recent posts, as a dated list.
+4. **Notes** — the five most recent notes, as a dated list.
 5. **Photos** — an asymmetric spread of three photographs, drawn from distinct
    collections where possible.
 
@@ -151,7 +151,7 @@ Each section has a heading with a link to its full listing page.
 
 ## Tag Filtering
 
-Notes and Building listing pages have tag filtering. Tags in frontmatter automatically appear as inline filter buttons. Clicking a tag filters the list instantly (client-side). The URL updates to `?tag=fitness` for sharing.
+Notes and Projects listing pages have tag filtering. Tags in frontmatter automatically appear as inline filter buttons. Clicking a tag filters the list instantly (client-side). The URL updates to `?tag=fitness` for sharing.
 
 Tags on entries are display-only — the filter bar at the top of the listing page is the interactive element.
 
@@ -159,11 +159,11 @@ Tags on entries are display-only — the filter bar at the top of the listing pa
 
 ## Pagination
 
-Notes paginates automatically at 12 posts per page. Pages are generated at build time as static HTML: `/notes/`, `/notes/2/`, `/notes/3/`, etc.
+Notes paginates automatically at 12 entries per page. Pages are generated at build time as static HTML: `/notes/`, `/notes/2/`, `/notes/3/`, etc.
 
 ---
 
-## Media in Posts
+## Media in Notes
 
 ### Inline Image
 ```markdown
@@ -211,20 +211,20 @@ To add a completely new category (e.g., "Reviews"):
 
 2. **Create the folder:** `src/content/reviews/`
 
-3. **Create a listing page** at `src/pages/reviews/index.astro` — copy `src/pages/building/index.astro` as a template.
+3. **Create a listing page** at `src/pages/reviews/index.astro` — copy `src/pages/projects/index.astro` as a template.
 
-4. **Create a detail page** at `src/pages/reviews/[...slug].astro` — copy `src/pages/building/[...slug].astro`.
+4. **Create a detail page** at `src/pages/reviews/[...slug].astro` — copy `src/pages/projects/[...slug].astro`.
 
 5. **Add a nav link** in `src/components/Nav.astro`:
    ```typescript
    { href: '/reviews/', label: 'Reviews' },
    ```
 
-6. **Add a section to `src/pages/index.astro`** using `SectionHeading` plus the relevant entry component — query the collection, then render it inside a `<section class="section">`.
+6. **Add a section to `src/pages/index.astro`** using the global `.section-header` / `.section-view-all` pair plus the relevant entry component — query the collection, then render it inside a `<section class="section">`.
 
 7. **Add content** — create `.md` files in `src/content/reviews/`.
 
-8. **Reference from Building** — add `"reviews/my-review"` to any project's `relatedWork` array to show it in that project's timeline.
+8. **Reference from Projects** — add `"reviews/my-review"` to any project's `relatedWork` array to show it in that project's timeline.
 
 ---
 
@@ -284,12 +284,11 @@ src/
 ├── styles/global.css         # Design tokens, spacing, animations, theme
 ├── layouts/
 │   ├── BaseLayout.astro      # HTML shell, nav, footer, theme
-│   └── PostLayout.astro      # Notes post layout
+│   └── NoteLayout.astro      # Notes layout
 ├── components/
 │   ├── Nav.astro             # Desktop + mobile navigation
 │   ├── ThemeToggle.astro     # Dark/light toggle
-│   ├── SectionHeading.astro  # Section label + "all" link
-│   ├── BuildingEntry.astro   # Numbered homepage entry
+│   ├── ProjectEntry.astro    # Numbered homepage entry
 │   ├── NoteList.astro        # Dated editorial index
 │   ├── PhotoFeature.astro    # Asymmetric homepage photo spread
 │   ├── GalleryGrid.astro     # Photo archive grid
@@ -299,10 +298,10 @@ src/
 │   ├── ReadingProgress.astro # Scroll progress bar
 │   └── ShareButton.astro     # Web Share / copy link
 ├── content/
-│   ├── posts/                # Notes (Markdown)
+│   ├── notes/                # Notes (Markdown)
 │   ├── photos/               # Photo entries
-│   └── projects/             # Building entries
-└── pages/                    # Routes: /, /notes/, /building/, /photos/, /about/
+│   └── projects/             # Project entries
+└── pages/                    # Routes: /, /projects/, /notes/, /photos/, /about/
 ```
 
 ## License

@@ -26,47 +26,47 @@ const pageUrl = `${SITE.url}${Astro.url.pathname}`;
 <BaseLayout title={title} description={description} prose>
   <ReadingProgress />
 
-  <a href="/notes/" class="back-link">← Back to notes</a>
+  <a href="/notes/" class="back-link">← Back to Notes</a>
 
-  <article class="post">
-    <header class="post-header">
-      <div class="post-meta type-meta">
+  <article class="note">
+    <header class="note-header">
+      <div class="note-meta type-meta">
         <time datetime={date.toISOString()}>{formattedDate}</time>
         <span class="dot" aria-hidden="true"></span>
         <span>{minutesRead} min read</span>
       </div>
 
-      <h1 class="type-title post-title">{title}</h1>
+      <h1 class="type-title note-title">{title}</h1>
 
-      {description && <p class="post-deck">{description}</p>}
+      {description && <p class="note-deck">{description}</p>}
 
       {tags.length > 0 && (
-        <ul class="post-tags">
+        <ul class="note-tags">
           {tags.map(tag => <li class="type-meta">{tag}</li>)}
         </ul>
       )}
     </header>
 
-    <div class="prose post-body">
+    <div class="prose note-body">
       <slot />
     </div>
 
-    <footer class="post-footer">
-      <a href="/notes/" class="back-link">← All notes</a>
+    <footer class="note-footer">
+      <a href="/notes/" class="back-link">← All Notes</a>
       <ShareButton title={title} url={pageUrl} />
     </footer>
   </article>
 </BaseLayout>
 
 <style>
-  .post-header {
+  .note-header {
     padding-bottom: var(--heading-gap);
     margin-bottom: clamp(40px, 5vw, 56px);
     border-bottom: 1px solid var(--border);
     transition: border-color 0.4s;
   }
 
-  .post-meta {
+  .note-meta {
     display: flex;
     gap: 12px;
     align-items: center;
@@ -80,12 +80,12 @@ const pageUrl = `${SITE.url}${Astro.url.pathname}`;
     background: var(--text-muted);
   }
 
-  .post-title {
+  .note-title {
     margin: 0;
     max-width: 22ch;
   }
 
-  .post-deck {
+  .note-deck {
     margin-top: 20px;
     font-family: var(--font-serif);
     font-style: italic;
@@ -96,14 +96,14 @@ const pageUrl = `${SITE.url}${Astro.url.pathname}`;
     max-width: 46ch;
   }
 
-  .post-tags {
+  .note-tags {
     display: flex;
     gap: 18px;
     flex-wrap: wrap;
     margin-top: 28px;
   }
 
-  .post-footer {
+  .note-footer {
     margin-top: 64px;
     padding-top: 28px;
     border-top: 1px solid var(--border);
@@ -114,7 +114,7 @@ const pageUrl = `${SITE.url}${Astro.url.pathname}`;
     flex-wrap: wrap;
   }
 
-  .post-footer .back-link {
+  .note-footer .back-link {
     margin-bottom: 0;
   }
 </style>

@@ -6,5 +6,6 @@ caption: "First tracks of the morning"
 location: "Niseko, Japan"
 size: "wide"
 collection: "Skiing"
+cover: true
 tags: ["skiing", "snow", "japan"]
 ---

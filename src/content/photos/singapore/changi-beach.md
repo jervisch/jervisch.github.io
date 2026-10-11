@@ -6,5 +6,6 @@ caption: "First light on the shore"
 location: "Changi Beach, Singapore"
 size: "tall"
 collection: "Singapore"
+cover: true
 tags: ["sea", "morning", "coast"]
 ---

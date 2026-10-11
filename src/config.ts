@@ -15,3 +15,13 @@ export const SITE = {
     buymeacoffee: { url: 'https://buymeacoffee.com/jervischan', label: 'Buy Me a Coffee' },
   },
 };
+
+// Single source of truth for site navigation. Shared by Nav.astro and 404.astro
+// so the two can't drift. Each href matches its collection key and page folder —
+// see src/content.config.ts.
+export const NAV_LINKS = [
+  { href: '/projects/', label: 'Projects' },
+  { href: '/notes/', label: 'Notes' },
+  { href: '/photos/', label: 'Photos' },
+  { href: '/about/', label: 'About' },
+] as const;

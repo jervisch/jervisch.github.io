@@ -18,15 +18,15 @@ const { status, year, url } = project.data;
 ---
 
 <BaseLayout title={project.data.title} description={project.data.description} prose>
-  <a href="/building/" class="back-link">← Back to building</a>
+  <a href="/projects/" class="back-link">← Back to Projects</a>
 
-  <article class="thing">
-    <header class="thing-header">
-      <h1 class="type-title thing-title">{project.data.title}</h1>
-      <p class="thing-deck">{project.data.description}</p>
+  <article class="project">
+    <header class="project-header">
+      <h1 class="type-title project-title">{project.data.title}</h1>
+      <p class="project-deck">{project.data.description}</p>
 
       {(status || year || project.data.tags.length > 0) && (
-        <div class="thing-meta">
+        <div class="project-meta">
           {status && <span class="type-meta">{status}</span>}
           {year && <span class="type-meta">{year}</span>}
           {project.data.tags.map(tag => <span class="type-meta">{tag}</span>)}
@@ -34,14 +34,14 @@ const { status, year, url } = project.data;
       )}
     </header>
 
-    <div class="prose thing-body">
+    <div class="prose project-body">
       <Content />
     </div>
 
     <Timeline refs={project.data.relatedWork} />
 
     {url && url !== '#' && (
-      <div class="thing-outbound">
+      <div class="project-outbound">
         <a href={url} class="arrow-link" target="_blank" rel="noopener noreferrer">
           View project
           <span class="arrow" aria-hidden="true">↗</span>
@@ -49,26 +49,26 @@ const { status, year, url } = project.data;
       </div>
     )}
 
-    <footer class="thing-footer">
-      <a href="/building/" class="back-link">← All building</a>
+    <footer class="project-footer">
+      <a href="/projects/" class="back-link">← All Projects</a>
     </footer>
   </article>
 </BaseLayout>
 
 <style>
-  .thing-header {
+  .project-header {
     padding-bottom: var(--heading-gap);
     margin-bottom: clamp(40px, 5vw, 56px);
     border-bottom: 1px solid var(--border);
     transition: border-color 0.4s;
   }
 
-  .thing-title {
+  .project-title {
     margin: 0;
     max-width: 22ch;
   }
 
-  .thing-deck {
+  .project-deck {
     margin-top: 20px;
     font-family: var(--font-serif);
     font-style: italic;
@@ -79,24 +79,24 @@ const { status, year, url } = project.data;
     max-width: 48ch;
   }
 
-  .thing-meta {
+  .project-meta {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
     margin-top: 28px;
   }
 
-  .thing-outbound {
+  .project-outbound {
     margin-top: 48px;
     padding-top: 28px;
     border-top: 1px solid var(--border);
   }
 
-  .thing-footer {
+  .project-footer {
     margin-top: 56px;
   }
 
-  .thing-footer .back-link {
+  .project-footer .back-link {
     margin-bottom: 0;
   }
 </style>

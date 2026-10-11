@@ -4,19 +4,19 @@ import { SITE } from '../config';
 import type { APIContext } from 'astro';
 
 export async function GET(context: APIContext) {
-  const posts = (await getCollection('posts'))
-    .filter(p => !p.data.draft)
+  const notes = (await getCollection('notes'))
+    .filter(n => !n.data.draft)
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   return rss({
     title: SITE.name,
     description: SITE.tagline,
     site: context.site!,
-    items: posts.map(post => ({
-      title: post.data.title,
-      pubDate: post.data.date,
-      description: post.data.description || '',
-      link: `/notes/${post.id}/`,
+    items: notes.map(note => ({
+      title: note.data.title,
+      pubDate: note.data.date,
+      description: note.data.description || '',
+      link: `/notes/${note.id}/`,
     })),
   });
 }

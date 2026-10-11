@@ -26,7 +26,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', {
 -->
 <ol class="note-list">
   {notes.map(note => (
-    <li class="note-row">
+    <li>
       <a href={note.href} class="note-link">
         <time class="note-date type-meta" datetime={note.date.toISOString()}>
           {fmt.format(note.date).toUpperCase()}
@@ -42,15 +42,6 @@ const fmt = new Intl.DateTimeFormat('en-GB', {
   .note-list {
     display: flex;
     flex-direction: column;
-  }
-
-  .note-row {
-    border-top: 1px solid var(--border);
-    transition: border-color 0.4s;
-  }
-
-  .note-row:last-child {
-    border-bottom: 1px solid var(--border);
   }
 
   .note-link {

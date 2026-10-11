@@ -1,19 +1,12 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-import { SITE } from '../config';
+import { SITE, NAV_LINKS } from '../config';
 
 interface Props {
   currentPath?: string;
 }
 
 const { currentPath = '' } = Astro.props;
-
-const links = [
-  { href: '/building/', label: 'Building' },
-  { href: '/notes/', label: 'Notes' },
-  { href: '/photos/', label: 'Photos' },
-  { href: '/about/', label: 'About' },
-];
 
 function isActive(linkHref: string, current: string): boolean {
   if (linkHref === '/') return current === '/';
@@ -26,7 +19,7 @@ function isActive(linkHref: string, current: string): boolean {
 
   <div class="nav-right">
     <ul class="nav-links">
-      {links.map(link => (
+      {NAV_LINKS.map(link => (
         <li>
           <a
             href={link.href}
@@ -57,7 +50,7 @@ function isActive(linkHref: string, current: string): boolean {
   <div class="mobile-menu-panel" role="dialog" aria-modal="true" aria-label="Menu">
     <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">&times;</button>
     <ul class="mobile-menu-links">
-      {links.map((link, i) => (
+      {NAV_LINKS.map((link, i) => (
         <li class="mobile-menu-item" style={`--i: ${i}`}>
           <a
             href={link.href}

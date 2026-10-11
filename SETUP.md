@@ -108,7 +108,7 @@ The repo includes sample content to show the site structure. **Delete or replace
 
 | Collection | Folder | What to do |
 |------------|--------|------------|
-| Posts | `src/content/posts/` | Delete `_ideas.md` and sample posts, or keep as drafts (`draft: true`) |
+| Notes | `src/content/notes/` | Delete `_ideas.md` and the sample notes, or keep them as drafts (`draft: true`) |
 | Projects | `src/content/projects/` | Replace `90-day-recomp.md`, `runbook-generator.md`, `this-site.md` |
 | Photos | `src/content/photos/` | Replace all `.md` files and images in `public/images/photos/` |
 
@@ -180,5 +180,5 @@ Go to the **Actions** tab and watch the "Deploy to GitHub Pages" workflow. Once 
 ## Next Steps
 
 - Read `README.md` for full content model and customization details
-- Add your first real post: `src/content/posts/my-first-post.md`
+- Add your first real note: `src/content/notes/my-first-note.md`
 - Consider enabling the `creating-new-content-type` skill if you want to add more content categories

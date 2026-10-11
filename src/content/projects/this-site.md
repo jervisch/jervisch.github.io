@@ -6,7 +6,7 @@ order: 0
 status: "growing"
 year: 2026
 relatedWork:
-  - "posts/building-a-portfolio-with-astro"
+  - "notes/building-a-portfolio-with-astro"
 tags: ["web", "design", "astro"]
 ---
 

@@ -1,5 +1,5 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry, type CollectionKey } from 'astro:content';
 
 interface Props {
   refs: string[];
@@ -7,31 +7,53 @@ interface Props {
 
 const { refs } = Astro.props;
 
-// Collection folder → public route. Keep in sync with src/components/Nav.astro.
-const urlPrefixes: Record<string, string> = {
-  posts: 'notes',
-  projects: 'building',
-  photos: 'photos',
-};
+// Collections that have a per-entry detail page, so a ref to one can be
+// rendered as a link. `photos` is deliberately excluded: /photos/<slug> is one
+// page per collection (Singapore, Japan, …), not per photo, so a photo ref has
+// no leaf page to point at. The `satisfies` clause makes renaming or removing a
+// collection a build error here rather than a silent dead link.
+const REF_COLLECTIONS = ['notes', 'projects'] as const satisfies readonly CollectionKey[];
+
+type RefCollection = (typeof REF_COLLECTIONS)[number];
+
+function isRefCollection(value: string): value is RefCollection {
+  return (REF_COLLECTIONS as readonly string[]).includes(value);
+}
+
+interface TimelineItem {
+  title: string;
+  url: string;
+  date: Date | undefined;
+}
 
 const resolvedWork = await Promise.all(
-  refs.map(async (ref: string) => {
+  refs.map(async (ref: string): Promise<TimelineItem | null> => {
     const [collection, id] = ref.split('/');
-    const entry = await getEntry(collection as any, id);
-    if (!entry) return null;
-    // Draft posts get no production page — skip them outside dev to avoid dead links
-    if ((entry.data as any).draft && !import.meta.env.DEV) return null;
-    const urlPrefix = urlPrefixes[collection] || collection;
+    if (!isRefCollection(collection) || !id) {
+      throw new Error(
+        `Timeline: "${ref}" is not a valid reference. Expected "<collection>/<id>" ` +
+          `where collection is one of: ${REF_COLLECTIONS.join(', ')}.`
+      );
+    }
+
+    const entry = await getEntry(collection, id);
+    if (!entry) {
+      throw new Error(`Timeline: "${ref}" does not match any entry in "${collection}".`);
+    }
+
+    // Draft notes get no production page — skip them outside dev to avoid dead links
+    if ('draft' in entry.data && entry.data.draft && !import.meta.env.DEV) return null;
+
     return {
       title: entry.data.title,
-      url: `/${urlPrefix}/${id}/`,
-      date: (entry.data as any).date as Date | undefined,
+      url: `/${collection}/${id}/`,
+      date: 'date' in entry.data ? (entry.data.date as Date) : undefined,
     };
   })
 );
 
 const timeline = resolvedWork
-  .filter((w): w is NonNullable<typeof w> => w !== null)
+  .filter((w): w is TimelineItem => w !== null)
   .sort((a, b) => {
     if (a.date && b.date) return b.date.valueOf() - a.date.valueOf();
     if (a.date) return -1;

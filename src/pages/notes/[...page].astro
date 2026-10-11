@@ -4,18 +4,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
 export const getStaticPaths = (async ({ paginate }) => {
-  const posts = (await getCollection('posts'))
-    .filter(p => (!p.data.draft || import.meta.env.DEV))
+  const notes = (await getCollection('notes'))
+    .filter(n => (!n.data.draft || import.meta.env.DEV))
     .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-  return paginate(posts, { pageSize: 12 });
+  return paginate(notes, { pageSize: 12 });
 }) satisfies GetStaticPaths;
 
 const { page } = Astro.props;
 
-const allPosts = (await getCollection('posts'))
-  .filter(p => (!p.data.draft || import.meta.env.DEV));
-const allTags = [...new Set(allPosts.flatMap(p => p.data.tags))].sort();
+const allNotes = (await getCollection('notes'))
+  .filter(n => (!n.data.draft || import.meta.env.DEV));
+const allTags = [...new Set(allNotes.flatMap(n => n.data.tags))].sort();
 
 const fmt = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -36,7 +36,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', {
     </p>
 
     {allTags.length > 0 && (
-      <div class="tag-filter" id="tag-filter" role="group" aria-label="Filter notes by tag">
+      <div class="tag-filter" id="tag-filter" role="group" aria-label="Filter Notes by tag">
         <button class="tag active" data-tag="" aria-pressed="true">All</button>
         {allTags.map(tag => (
           <button class="tag" data-tag={tag} aria-pressed="false">{tag}</button>
@@ -46,16 +46,16 @@ const fmt = new Intl.DateTimeFormat('en-GB', {
   </header>
 
   <ol class="notes" id="note-list">
-    {page.data.map(post => (
-      <li class="note-row" data-tags={post.data.tags.join(',')}>
-        <a href={`/notes/${post.id}/`} class="note-link">
-          <time class="note-date type-meta" datetime={post.data.date.toISOString()}>
-            {fmt.format(post.data.date).toUpperCase()}
+    {page.data.map(note => (
+      <li class="note-row" data-tags={note.data.tags.join(',')}>
+        <a href={`/notes/${note.id}/`} class="note-link">
+          <time class="note-date type-meta" datetime={note.data.date.toISOString()}>
+            {fmt.format(note.data.date).toUpperCase()}
           </time>
           <span class="note-main">
-            <span class="note-title">{post.data.title}</span>
-            {post.data.description && (
-              <span class="note-desc">{post.data.description}</span>
+            <span class="note-title">{note.data.title}</span>
+            {note.data.description && (
+              <span class="note-desc">{note.data.description}</span>
             )}
           </span>
           <span class="note-arrow" aria-hidden="true">→</span>
@@ -64,7 +64,7 @@ const fmt = new Intl.DateTimeFormat('en-GB', {
     ))}
   </ol>
 
-  <p class="no-results" id="no-results" hidden>No notes with this tag.</p>
+  <p class="no-results" id="no-results" hidden>No Notes with this tag.</p>
 
   {page.lastPage > 1 && (
     <nav class="pagination" aria-label="Notes pagination">

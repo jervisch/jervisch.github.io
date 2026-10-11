@@ -8,7 +8,7 @@ year: 2026
 # cover: "/images/photos/example.jpg"   # only set if the file exists; otherwise no image renders
 tags: ["example", "getting-started"]
 relatedWork: []
-  # - "posts/my-note"            # renders as a timeline under the body
+  # - "notes/my-note"            # renders as a timeline under the body
 ---
 
 Write about the project here. What it does, why you built it, what you learned.
