@@ -1,0 +1,470 @@
+---
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('experience')).sort((a, b) => {
+  return startRank(b.data.start) - startRank(a.data.start) || b.data.order - a.data.order;
+});
+
+function startRank(value: string): number {
+  const [year, month = '01'] = value.split('-');
+  return Number(year) * 100 + Number(month);
+}
+
+function formatDate(value: string): string {
+  const [year, month] = value.split('-');
+  if (!month) return year;
+  return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(
+    new Date(Number(year), Number(month) - 1, 1)
+  );
+}
+
+function formatRange(start: string, end?: string): string {
+  if (!end) return `${formatDate(start)} – Present`;
+  if (end === start) return formatDate(start);
+  return `${formatDate(start)} – ${formatDate(end)}`;
+}
+
+const startYears = entries.map((entry) => Number(entry.data.start.slice(0, 4)));
+const oldestYear = startYears.length > 0 ? Math.min(...startYears) : new Date().getFullYear();
+const currentYear = new Date().getFullYear();
+
+const ruler: string[] = ['Now'];
+for (let year = Math.floor((currentYear - 1) / 4) * 4; year >= oldestYear; year -= 4) {
+  ruler.push(String(year));
+}
+if (oldestYear < Number(ruler[ruler.length - 1])) ruler.push(String(oldestYear));
+---
+
+{entries.length > 0 && (
+  <div class="experience-timeline">
+    <div class="timeline-meta">
+      <span>{entries.length} entries</span>
+      <span class="timeline-hint">Drag or scroll →</span>
+    </div>
+
+    <div class="timeline-ruler" aria-hidden="true">
+      {ruler.map((label) => <span>{label}</span>)}
+    </div>
+
+    <div
+      class="timeline-viewport"
+      tabindex="0"
+      role="region"
+      aria-label="Experience timeline"
+      data-drag-scroll
+    >
+      <div class="timeline-track">
+        <div class="timeline-items">
+          {entries.map((entry, i) => {
+            const current = !entry.data.end;
+            return (
+              <article
+                class:list={[
+                  'timeline-item',
+                  i % 2 === 0 ? 'is-above' : 'is-below',
+                  { 'is-current': current },
+                ]}
+              >
+                <div class="timeline-card">
+                  <div class="timeline-card-top">
+                    <span class="timeline-date">
+                      {formatRange(entry.data.start, entry.data.end)}
+                    </span>
+                    <span class="timeline-badge">{entry.data.type}</span>
+                  </div>
+
+                  <div class="timeline-card-body">
+                    <span class="timeline-monogram" aria-hidden="true">
+                      {entry.data.organization.charAt(0)}
+                    </span>
+                    <div class="timeline-card-text">
+                      <h3 class="timeline-role">{entry.data.role}</h3>
+                      <p class="timeline-org">
+                        {entry.data.organization}
+                        {entry.data.location && (
+                          <span class="timeline-location"> · {entry.data.location}</span>
+                        )}
+                      </p>
+                    </div>
+                  </div>
+
+                  {entry.data.description && (
+                    <p class="timeline-desc">{entry.data.description}</p>
+                  )}
+                </div>
+
+                <span class="timeline-dot" aria-hidden="true"></span>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+<script>
+  const bindDragScroll = () => {
+    document.querySelectorAll<HTMLElement>('[data-drag-scroll]').forEach((el) => {
+      if (el.dataset.bound === 'true') return;
+      el.dataset.bound = 'true';
+
+      let active = false;
+      let startX = 0;
+      let startLeft = 0;
+      let pointerId = -1;
+
+      el.addEventListener('pointerdown', (event) => {
+        if (event.pointerType !== 'mouse' || event.button !== 0) return;
+        active = true;
+        startX = event.clientX;
+        startLeft = el.scrollLeft;
+        pointerId = event.pointerId;
+        el.setPointerCapture(pointerId);
+        el.classList.add('is-dragging');
+      });
+
+      el.addEventListener('pointermove', (event) => {
+        if (!active) return;
+        event.preventDefault();
+        el.scrollLeft = startLeft - (event.clientX - startX);
+      });
+
+      const endDrag = () => {
+        if (!active) return;
+        active = false;
+        el.classList.remove('is-dragging');
+      };
+
+      el.addEventListener('pointerup', endDrag);
+      el.addEventListener('pointercancel', endDrag);
+
+      if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+        el.classList.add('is-draggable');
+      }
+    });
+  };
+
+  bindDragScroll();
+  document.addEventListener('astro:after-swap', bindDragScroll);
+</script>
+
+<style>
+  .experience-timeline {
+    margin-top: 32px;
+  }
+
+  .timeline-viewport {
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 8px;
+    outline-offset: 6px;
+  }
+
+  .timeline-viewport::-webkit-scrollbar {
+    display: none;
+  }
+
+  .timeline-viewport.is-draggable {
+    cursor: grab;
+  }
+
+  .timeline-viewport.is-dragging {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  .timeline-viewport:focus-visible {
+    outline: 2px solid var(--accent);
+    border-radius: 4px;
+  }
+
+  .timeline-track {
+    width: max-content;
+    min-width: 100%;
+  }
+
+  .timeline-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+    font-family: var(--font-sans);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .timeline-ruler {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .timeline-ruler span {
+    position: relative;
+    font-family: var(--font-sans);
+    font-size: 0.625rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .timeline-ruler span::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 1px;
+    height: 6px;
+    background: var(--border-strong);
+  }
+
+  .timeline-items {
+    display: flex;
+    gap: 40px;
+    padding: 48px 12px;
+    position: relative;
+  }
+
+  .timeline-items::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    border-top: 1px dashed var(--border-strong);
+    z-index: 0;
+  }
+
+  .timeline-item {
+    position: relative;
+    z-index: 1;
+    flex: 0 0 280px;
+    display: grid;
+    grid-template-rows: 1fr auto 1fr;
+    scroll-snap-align: center;
+  }
+
+  .timeline-card {
+    grid-row: 1;
+    align-self: end;
+    margin-bottom: 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .is-below .timeline-card {
+    grid-row: 3;
+    align-self: start;
+    margin-bottom: 0;
+    margin-top: 18px;
+  }
+
+  .is-current .timeline-card {
+    border-color: var(--accent);
+  }
+
+  .timeline-item:hover .timeline-card {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+  }
+
+  .timeline-dot {
+    grid-row: 2;
+    justify-self: center;
+    position: relative;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .is-above .timeline-dot::before,
+  .is-below .timeline-dot::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    width: 1px;
+    height: 18px;
+    background: var(--border-strong);
+    transform: translateX(-50%);
+  }
+
+  .is-above .timeline-dot::before {
+    bottom: 100%;
+  }
+
+  .is-below .timeline-dot::after {
+    top: 100%;
+  }
+
+  .timeline-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .timeline-date {
+    font-family: var(--font-sans);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .is-current .timeline-date {
+    color: var(--accent);
+  }
+
+  .timeline-badge {
+    padding: 2px 7px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .timeline-card-body {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .timeline-monogram {
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg-subtle);
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .timeline-role {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 1.0625rem;
+    line-height: 1.25;
+    color: var(--text);
+  }
+
+  .timeline-org {
+    margin-top: 3px;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--text-muted);
+  }
+
+  .timeline-desc {
+    margin-top: 12px;
+    font-family: var(--font-sans);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 700px) {
+    .timeline-viewport {
+      overflow: visible;
+      padding-bottom: 0;
+    }
+
+    .timeline-track {
+      width: auto;
+      min-width: 0;
+    }
+
+    .timeline-meta {
+      margin-bottom: 10px;
+    }
+
+    .timeline-hint {
+      display: none;
+    }
+
+    .timeline-ruler {
+      display: none;
+    }
+
+    .timeline-items {
+      display: block;
+      padding: 8px 0 8px 28px;
+    }
+
+    .timeline-items::before {
+      top: 0;
+      bottom: 0;
+      left: 8px;
+      right: auto;
+      border-top: 0;
+      border-left: 1px dashed var(--border-strong);
+    }
+
+    .timeline-item {
+      display: block;
+      margin-bottom: 18px;
+    }
+
+    .timeline-card,
+    .is-below .timeline-card {
+      grid-row: auto;
+      margin: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -24px;
+      top: 24px;
+    }
+
+    .is-above .timeline-dot::before,
+    .is-below .timeline-dot::after {
+      display: none;
+    }
+
+    .timeline-item:hover .timeline-card {
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .timeline-card {
+      transition: none;
+    }
+
+    .timeline-item:hover .timeline-card {
+      transform: none;
+    }
+  }
+</style>

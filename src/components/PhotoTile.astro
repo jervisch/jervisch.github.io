@@ -1,0 +1,183 @@
+---
+import { getPhotoGradient } from '../lib/photoGradient';
+
+interface Props {
+  name: string;
+  count: number;
+  latestDate: number;
+  image: string;
+  exists: boolean;
+  index: number;
+  variant: 'feature' | 'side' | 'bottom';
+}
+
+const { name, count, latestDate, image, exists, index, variant } = Astro.props;
+
+const href = `/photos/${name.toLowerCase().replace(/\s+/g, '-')}/`;
+const date = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  year: 'numeric',
+}).format(new Date(latestDate));
+const photoLabel = count === 1 ? 'photo' : 'photos';
+---
+
+<a
+  class={`tile tile--${variant}`}
+  href={href}
+  aria-label={`${name} — ${count} ${photoLabel}, view all`}
+>
+  <div class="tile-media" style={`background: ${getPhotoGradient(image)};`}>
+    {exists && (
+      <img
+        src={image}
+        alt={`${name} collection cover`}
+        loading="lazy"
+        onload="this.style.opacity=1"
+      />
+    )}
+  </div>
+
+  <div class="tile-caption">
+    <span class="tile-index" aria-hidden="true">{String(index).padStart(2, '0')}</span>
+    <span class="tile-text">
+      <span class="tile-title">{name}</span>
+      <span class="tile-meta">{count} {photoLabel} · {date}</span>
+    </span>
+  </div>
+</a>
+
+<style>
+  .tile {
+    display: flex;
+    flex-direction: column;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .tile--feature {
+    grid-column: 1;
+    height: 100%;
+  }
+
+  .tile-media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .tile--feature .tile-media {
+    flex: none;
+    aspect-ratio: 1 / 1;
+  }
+
+  .tile--side .tile-media {
+    flex: none;
+    aspect-ratio: 16 / 10;
+  }
+
+  .tile--bottom .tile-media {
+    aspect-ratio: var(--tile-aspect, 16 / 10);
+  }
+
+  .tile-media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: transform 0.4s, opacity 0.3s;
+  }
+
+  .tile-media img[style*="opacity: 1"] {
+    opacity: 1;
+  }
+
+  .tile:hover .tile-media img,
+  .tile:focus-visible .tile-media img {
+    transform: scale(1.03);
+  }
+
+  .tile:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  .tile-caption {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding-top: 12px;
+  }
+
+  .tile-index {
+    flex: 0 0 auto;
+    font-family: var(--font-sans);
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+  }
+
+  .tile-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  .tile-title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 1.0625rem;
+    line-height: 1.25;
+    color: var(--text);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.3s;
+  }
+
+  .tile--feature .tile-title {
+    font-size: 1.25rem;
+  }
+
+  .tile:hover .tile-title,
+  .tile:focus-visible .tile-title {
+    text-decoration-color: var(--accent);
+  }
+
+  .tile-meta {
+    font-family: var(--font-sans);
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 1024px) {
+    .tile--feature .tile-media {
+      flex: none;
+      min-height: 0;
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile-media img {
+      transition: opacity 0.3s;
+    }
+
+    .tile:hover .tile-media img,
+    .tile:focus-visible .tile-media img {
+      transform: none;
+    }
+
+    .tile-title {
+      transition: none;
+    }
+  }
+</style>

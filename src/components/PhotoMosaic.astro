@@ -1,0 +1,139 @@
+---
+import PhotoTile from './PhotoTile.astro';
+import { photoExists } from '../lib/photoGradient';
+import { getCollection } from 'astro:content';
+
+const photosData = await getCollection('photos');
+const collections = new Map<string, typeof photosData>();
+for (const photo of photosData) {
+  const key = photo.data.collection;
+  if (!collections.has(key)) collections.set(key, []);
+  collections.get(key)!.push(photo);
+}
+
+const collectionEntries = Array.from(collections.entries())
+  .map(([name, collectionPhotos]) => {
+    collectionPhotos.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+    // The photo that represents the collection: an explicit `cover: true`
+    // if one is set, otherwise the newest by date.
+    const hero = collectionPhotos.find((p) => p.data.cover) ?? collectionPhotos[0];
+    return {
+      name,
+      count: collectionPhotos.length,
+      latestDate: hero.data.date.valueOf(),
+      image: hero.data.image,
+      exists: photoExists(hero.data.image),
+    };
+  })
+  .sort((a, b) => b.latestDate - a.latestDate)
+  .slice(0, 6);
+
+const [feature, ...rest] = collectionEntries;
+const side = rest.slice(0, 2);
+const bottom = rest.slice(2);
+---
+
+{collectionEntries.length > 0 && (
+  <div class="mosaic">
+    {feature && (
+      <PhotoTile
+        name={feature.name}
+        count={feature.count}
+        latestDate={feature.latestDate}
+        image={feature.image}
+        exists={feature.exists}
+        index={1}
+        variant="feature"
+      />
+    )}
+
+    {side.length > 0 && (
+      <div class="mosaic-side">
+        {side.map((collection, i) => (
+          <PhotoTile
+            name={collection.name}
+            count={collection.count}
+            latestDate={collection.latestDate}
+            image={collection.image}
+            exists={collection.exists}
+            index={i + 2}
+            variant="side"
+          />
+        ))}
+      </div>
+    )}
+
+    {bottom.length > 0 && (
+      <div class="mosaic-bottom" data-count={bottom.length}>
+        {bottom.map((collection, i) => (
+          <PhotoTile
+            name={collection.name}
+            count={collection.count}
+            latestDate={collection.latestDate}
+            image={collection.image}
+            exists={collection.exists}
+            index={i + 4}
+            variant="bottom"
+          />
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
+<style>
+  .mosaic {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: var(--grid-gap);
+  }
+
+  .mosaic-side {
+    display: grid;
+    grid-auto-rows: auto;
+    gap: var(--grid-gap);
+  }
+
+  .mosaic-bottom {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    gap: var(--grid-gap);
+  }
+
+  /* A single remaining collection would otherwise be a 740px-tall banner */
+  .mosaic-bottom[data-count='1'] {
+    --tile-aspect: 21 / 9;
+  }
+
+  @media (max-width: 1024px) {
+    .mosaic {
+      grid-template-columns: 1fr;
+    }
+
+    .mosaic-side {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: auto;
+    }
+
+    .mosaic-bottom {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    .mosaic-bottom {
+      grid-template-columns: 1fr;
+    }
+
+    .mosaic-bottom[data-count='1'] {
+      --tile-aspect: 16 / 10;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .mosaic-side {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
