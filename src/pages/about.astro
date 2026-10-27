@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ExperienceTimeline from '../components/ExperienceTimeline.astro';
 import { SITE } from '../config';
 
 const social = Object.values(SITE.social);
@@ -111,12 +112,36 @@ const interests = [
       </section>
     </div>
   </div>
+
+  <section class="section experience-section">
+    <header class="experience-head">
+      <h2 class="type-title">Experience</h2>
+      <p class="experience-intro type-subtitle">
+        From silicon wafers to production platforms.
+      </p>
+    </header>
+    <ExperienceTimeline />
+  </section>
 </BaseLayout>
 
 <style>
   .about-head {
     padding-block: var(--section-pad) var(--heading-gap);
     max-width: 40ch;
+  }
+
+  .section.experience-section {
+    border-top: 1px solid var(--border);
+  }
+
+  .experience-head {
+    max-width: 40ch;
+    margin-bottom: var(--heading-gap);
+  }
+
+  .experience-intro {
+    margin-top: 20px;
+    max-width: 44ch;
   }
 
   .about-statement {

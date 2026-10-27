@@ -26,10 +26,26 @@ const photos = defineCollection({
     size: z.enum(['square', 'tall', 'wide']).default('square'),
     collection: z.string(),
     // At most one photo per collection should set cover: true — it becomes the
-    // main image on the homepage carousel and the /photos grid. Falls back to
+    // main image on the homepage mosaic and the /photos grid. Falls back to
     // the newest photo by date when no cover is set.
     cover: z.boolean().default(false),
     tags: z.array(z.string()).default([]),
+  }),
+});
+
+const experience = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.md', base: './src/content/experience' }),
+  schema: z.object({
+    role: z.string(),
+    organization: z.string(),
+    // YYYY or YYYY-MM. Kept as a string so a year-only entry stays a year.
+    start: z.string().regex(/^\d{4}(-\d{2})?$/),
+    // Omitted means "Present".
+    end: z.string().regex(/^\d{4}(-\d{2})?$/).optional(),
+    type: z.enum(['work', 'education', 'volunteer', 'course']),
+    location: z.string().optional(),
+    description: z.string().optional(),
+    order: z.number().default(0),
   }),
 });
 
@@ -48,4 +64,4 @@ const projects = defineCollection({
   }),
 });
 
-export const collections = { notes, projects, photos };
+export const collections = { notes, projects, photos, experience };

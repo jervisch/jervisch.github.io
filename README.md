@@ -93,6 +93,35 @@ click (keyboard navigable: arrows + Escape).
 
 **Adding a new collection:** Just use a new `collection` name in any photo's frontmatter. It appears as a new section automatically.
 
+### Experience (`src/content/experience/`)
+
+Work and education history, rendered as a timeline on the About page. No listing page.
+
+```markdown
+---
+role: "Software Engineer"
+organization: "Company"
+start: "2023-06"
+end: "2025-06"
+type: "work"
+location: "Singapore"
+description: "What you did."
+---
+```
+
+| Field | Required | Notes |
+|---|---|---|
+| `role` | Yes | Position title |
+| `organization` | Yes | Employer or institution |
+| `start` | Yes | `YYYY` or `YYYY-MM` |
+| `end` | No | `YYYY` or `YYYY-MM`; omit for Present |
+| `type` | Yes | One of `work`, `education`, `volunteer`, `course` |
+| `location` | No | City |
+| `description` | No | One-line summary shown under the role |
+| `order` | No | Sort key, defaults to `1` |
+
+Entries sort by start date, newest first.
+
 ### Projects (`src/content/projects/`)
 
 Discrete things you've built. Each has a detail page with body content.
@@ -142,8 +171,7 @@ The homepage is a single editorial column in this order:
 3. **Projects** — the first three projects by `order`, as numbered entries with
    status and year.
 4. **Notes** — the five most recent notes, as a dated list.
-5. **Photos** — an asymmetric spread of three photographs, drawn from distinct
-   collections where possible.
+5. **Photos** — an asymmetric mosaic spread, drawn from distinct collections where possible.
 
 Each section has a heading with a link to its full listing page.
 

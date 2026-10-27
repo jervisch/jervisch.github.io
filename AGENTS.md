@@ -22,12 +22,13 @@ name, collection key, route, and headings all use the same word:
 - **Notes** (`src/content/notes/`) — published at `/notes/`: title, date, description?, tags?, draft?, series?, order?
 - **Projects** (`src/content/projects/`) — published at `/projects/`: title, description, url?, order? (ascending; the homepage shows the first three), year?, status? (growing/exploring/finished/paused), cover?, relatedWork[], tags?
 - **Photos** (`src/content/photos/`) — published at `/photos/`: title, date, image, caption?, location?, size? (square/tall/wide), collection, cover?, tags?
+- **Experience** (`src/content/experience/`) — no route; rendered on About: role, organization, start (YYYY or YYYY-MM), end? (omit for Present), type (work/education/volunteer/course), location?, description?, order?
 
 ### Collection cover images
-A collection's main image — the one shown on the homepage carousel and the
+A collection's main image — the one shown on the homepage mosaic and the
 `/photos` grid — is the photo with `cover: true`. Mark exactly one photo per
 collection; if none is marked, the site falls back to the newest by date. The
-flag is honoured in both `PhotosCarousel.astro` and `pages/photos/index.astro`,
+flag is honoured in both `PhotoMosaic.astro` and `pages/photos/index.astro`,
 so setting it changes both surfaces at once.
 - **Now**: a single short line at `SITE.now` in `src/config.ts`, rendered inside About.
   It is state of mind, not a list of projects.
@@ -98,13 +99,14 @@ preserving, so a renamed route is simply gone. When you rename one, update
 
 ## Component Inventory
 Editorial sections (homepage): `HeroAnimation`, `ProjectEntry`, `NoteList`,
-`PhotosCarousel`
+`PhotoMosaic` (composed from `PhotoTile`)
+About-only: `ExperienceTimeline`
 Retained: `Nav`, `Footer`, `GalleryGrid`, `Lightbox`, `Timeline`, `ThemeToggle`,
 `ReadingProgress`, `ShareButton`
 
 Section headings on the homepage are inlined in `src/pages/index.astro` and use
 the global `.section-header` / `.section-view-all` pair from `global.css`. Do not
-reintroduce a heading-owning component — `PhotosCarousel` in particular renders
+reintroduce a heading-owning component — `PhotoMosaic` in particular renders
 photos only and must not own its own heading.
 
 ## File Extensions

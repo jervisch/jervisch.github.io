@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectEntry from '../components/ProjectEntry.astro';
 import NoteList from '../components/NoteList.astro';
-import PhotosCarousel from '../components/PhotosCarousel.astro';
+import PhotoMosaic from '../components/PhotoMosaic.astro';
 import HeroAnimation from '../components/HeroAnimation.astro';
 import { SITE } from '../config';
 import { getCollection } from 'astro:content';
@@ -74,7 +74,7 @@ const projects = (await getCollection('projects'))
       <h2 class="type-title">Photos</h2>
       <a href="/photos/" class="section-view-all">All Photos →</a>
     </header>
-    <PhotosCarousel />
+    <PhotoMosaic />
   </section>
 </BaseLayout>
 
