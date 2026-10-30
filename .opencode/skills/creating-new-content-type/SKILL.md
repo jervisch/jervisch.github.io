@@ -1,3 +1,8 @@
+---
+name: creating-new-content-type
+description: Use when the user wants to add a completely new content category to this site (e.g. Reviews, Talks, Newsletter) that needs a new collection schema, folder, listing/detail pages, nav link, and homepage section.
+---
+
 # Skill: creating-new-content-type
 
 Scaffolds a new content collection (schema, folder, pages, nav link, homepage column).

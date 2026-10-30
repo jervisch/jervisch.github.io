@@ -1,3 +1,8 @@
+---
+name: customise-website
+description: Use when the user wants to personalize or make the site template their own — replacing placeholder identity, colors, fonts, About page content, or the Now section with their real info.
+---
+
 # Skill: customise-website
 
 Interactive personalization of site config, colors, fonts, About page, and "Now" section.
