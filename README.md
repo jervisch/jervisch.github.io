@@ -132,11 +132,9 @@ title: "Project Name"
 description: "One-line pitch."
 url: "https://github.com/you/project"
 order: 1
-tags: ["tag"]
 ---
 
 Write about the project here. What it does, why you built it.
-Link to related writing or other work.
 ```
 
 | Field | Required | Notes |
@@ -146,17 +144,11 @@ Link to related writing or other work.
 | `url` | No | External link — shows "View project ↗" on detail page |
 | `order` | No | Sort key, ascending (defaults to `1`). The homepage shows the first three |
 | `year` | No | Shown alongside the entry on the homepage and detail page |
-| `status` | No | One of `growing`, `exploring`, `finished`, `paused` |
 | `cover` | No | Path to a cover image for the homepage entry |
-| `relatedWork` | No | Array of `"collection/id"` refs — renders as a date-sorted timeline on the detail page |
-| `tags` | No | Filterable on listing page |
 
-**Listing page:** `/projects/` — an editorial index with inline tag filtering.
+**Listing page:** `/projects/` — an editorial index.
 
-**Detail page:** `/projects/[slug]/` — body content + auto-generated timeline of
-related work, sorted by date + optional external link.
-
-**The `relatedWork` ref format:** `"collection/id"` where collection is `notes` or `projects`, and id is the filename without `.md`. The template automatically looks up the title and date from the referenced content. No data duplication.
+**Detail page:** `/projects/[slug]/` — body content + optional external link.
 
 ---
 
@@ -164,14 +156,13 @@ related work, sorted by date + optional external link.
 
 The homepage is a single editorial column in this order:
 
-1. **Hero** — your name, tagline, and location.
-2. **About** — a short statement, plus the "Now" line as one italic sentence,
-   with a link to the full About page. The Now line reads from `SITE.now` in
-   `src/config.ts` — edit that string directly.
-3. **Projects** — the first three projects by `order`, as numbered entries with
-   status and year.
-4. **Notes** — the five most recent notes, as a dated list.
-5. **Photos** — an asymmetric mosaic spread, drawn from distinct collections where possible.
+1. **Hero** — a greeting, a statement that cycles through a list, and your
+   tagline. All three come from `src/config.ts`: `SITE.hero.greeting`,
+   `SITE.hero.statements`, and `SITE.tagline`.
+2. **Projects** — the first three projects by `order`, as numbered entries with
+   their description.
+3. **Notes** — the five most recent notes, as a dated list.
+4. **Photos** — an asymmetric mosaic spread, drawn from distinct collections where possible.
 
 Each section has a heading with a link to its full listing page.
 
@@ -179,7 +170,7 @@ Each section has a heading with a link to its full listing page.
 
 ## Tag Filtering
 
-Notes and Projects listing pages have tag filtering. Tags in frontmatter automatically appear as inline filter buttons. Clicking a tag filters the list instantly (client-side). The URL updates to `?tag=fitness` for sharing.
+The Notes listing page has tag filtering. Tags in frontmatter automatically appear as inline filter buttons. Clicking a tag filters the list instantly (client-side). The URL updates to `?tag=fitness` for sharing.
 
 Tags on entries are display-only — the filter bar at the top of the listing page is the interactive element.
 
@@ -252,8 +243,6 @@ To add a completely new category (e.g., "Reviews"):
 
 7. **Add content** — create `.md` files in `src/content/reviews/`.
 
-8. **Reference from Projects** — add `"reviews/my-review"` to any project's `relatedWork` array to show it in that project's timeline.
-
 ---
 
 ## Customization
@@ -274,10 +263,10 @@ Both light and dark themes are defined there.
 Uses [Outfit](https://fonts.google.com/specimen/Outfit) via `@fontsource/outfit`. To change: install a different `@fontsource/` package, update imports in `global.css`, update `font-family`.
 
 ### Site Info
-Edit `src/config.ts` for name, tagline, bio, social links, and support/sponsorship links (e.g., Buy Me a Coffee).
+Edit `src/config.ts` for name, tagline, hero greeting and statements, bio, social links, and support/sponsorship links (e.g., Buy Me a Coffee).
 
 ### "Now" Line
-Edit `SITE.now` in `src/config.ts` directly. It renders as one italic line in the About section of the homepage.
+Edit `SITE.now` in `src/config.ts` directly. It renders as one italic line on the About page.
 
 ### About Page
 Edit `src/pages/about.astro` directly. Replace the gradient placeholder with your own photo.
@@ -307,7 +296,7 @@ Static HTML. `npm run build` → output in `dist/`. Works on Cloudflare Pages, V
 
 ```
 src/
-├── config.ts                 # Site config (name, tagline, now, social, support)
+├── config.ts                 # Site config (name, tagline, hero, now, social, support)
 ├── content.config.ts         # Content collection schemas
 ├── styles/global.css         # Design tokens, spacing, animations, theme
 ├── layouts/
@@ -316,12 +305,14 @@ src/
 ├── components/
 │   ├── Nav.astro             # Desktop + mobile navigation
 │   ├── ThemeToggle.astro     # Dark/light toggle
+│   ├── Hero.astro            # Homepage hero: greeting + cycling statement
+│   ├── HeroAnimation.astro   # WebGL background behind the hero
 │   ├── ProjectEntry.astro    # Numbered homepage entry
 │   ├── NoteList.astro        # Dated editorial index
-│   ├── PhotoFeature.astro    # Asymmetric homepage photo spread
+│   ├── PhotoMosaic.astro     # Asymmetric homepage photo spread
+│   ├── PhotoTile.astro       # Tile linking to a photo collection
 │   ├── GalleryGrid.astro     # Photo archive grid
 │   ├── Lightbox.astro        # Progressive-enhancement viewer
-│   ├── Timeline.astro        # Related-work timeline on detail pages
 │   ├── Footer.astro          # Site-wide footer with support link
 │   ├── ReadingProgress.astro # Scroll progress bar
 │   └── ShareButton.astro     # Web Share / copy link

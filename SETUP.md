@@ -24,18 +24,28 @@ git remote set-url origin https://github.com/<your-username>/<your-username>.git
 Update these fields with your info:
 
 ```typescript
-export const siteConfig = {
+export const SITE = {
   name: "Your Name",
-  tagline: "Your tagline / role",
-  bio: "Short bio for the About page and meta description.",
-  socialLinks: [
-    { label: "GitHub", href: "https://github.com/your-username", icon: "github" },
-    { label: "LinkedIn", href: "https://linkedin.com/in/your-username", icon: "linkedin" },
-    { label: "Email", href: "mailto:you@example.com", icon: "mail" },
-  ],
-  supportLinks: [
-    { label: "Buy Me a Coffee", href: "https://buymeacoffee.com/your-username" },
-  ],
+  tagline: "Your role in one line — shown under the hero and used for meta descriptions.",
+  hero: {
+    greeting: "Hi, I am YourName.",
+    statements: [
+      "First statement that cycles through the hero.",
+      "Add as many statements as you like.",
+    ],
+  },
+  bio: "Short bio for the About page.",
+  now: "Currently building X, learning Y.",
+  location: "Your City",
+  url: "https://your-username.github.io",
+  social: {
+    github: { url: "https://github.com/your-username", label: "GitHub" },
+    linkedin: { url: "https://linkedin.com/in/your-username", label: "LinkedIn" },
+    email: { url: "mailto:you@example.com", label: "Email" },
+  },
+  support: {
+    buymeacoffee: { url: "https://buymeacoffee.com/your-username", label: "Buy Me a Coffee" },
+  },
 };
 ```
 
@@ -109,7 +119,7 @@ The repo includes sample content to show the site structure. **Delete or replace
 | Collection | Folder | What to do |
 |------------|--------|------------|
 | Notes | `src/content/notes/` | Delete `_ideas.md` and the sample notes, or keep them as drafts (`draft: true`) |
-| Projects | `src/content/projects/` | Replace `90-day-recomp.md`, `runbook-generator.md`, `this-site.md` |
+| Projects | `src/content/projects/` | Replace `90-day-recomp.md`, `runbook-generator.md`, `portfolio.md` |
 | Photos | `src/content/photos/` | Replace all `.md` files and images in `public/images/photos/` |
 
 `_example.md` and any other `_`-prefixed file is a template — it is never published.
