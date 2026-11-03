@@ -3,8 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ProjectEntry from '../components/ProjectEntry.astro';
 import NoteList from '../components/NoteList.astro';
 import PhotoMosaic from '../components/PhotoMosaic.astro';
-import HeroAnimation from '../components/HeroAnimation.astro';
-import { SITE } from '../config';
+import Hero from '../components/Hero.astro';
 import { getCollection } from 'astro:content';
 
 const notes = (await getCollection('notes'))
@@ -17,17 +16,7 @@ const projects = (await getCollection('projects'))
 
 <BaseLayout currentPath="/" home>
   <!-- ─── Hero ─── -->
-  <section class="hero">
-    <HeroAnimation />
-    <h1 class="hero-name type-display">
-      I make things,<br />
-      think about systems,<br />
-      and notice too much.
-    </h1>
-    <p class="hero-meta type-meta">
-      {SITE.name} · {SITE.location} · Engineer
-    </p>
-  </section>
+  <Hero />
 
   <!-- ─── Projects ─── -->
   <section class="projects-section">
@@ -78,36 +67,6 @@ const projects = (await getCollection('projects'))
 </BaseLayout>
 
 <style>
-  /* ─── Hero ─── */
-  .hero {
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding-bottom: clamp(48px, 7vw, 88px);
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-name {
-    margin: 0;
-    position: relative;
-    z-index: 2;
-  }
-
-  .hero-meta {
-    margin-top: 40px;
-    position: relative;
-    z-index: 2;
-  }
-
-  .hero-animation {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
-
   /* ─── Projects Section ─── */
   .projects-section {
     min-height: 100svh;

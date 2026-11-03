@@ -1,6 +1,17 @@
 export const SITE = {
   name: 'Jervis Chan',
-  tagline: 'I make things, think about systems, and notice too much.',
+  tagline: 'Software engineer working on AI infrastructure, systems, and automation.',
+  hero: {
+    greeting: 'Hi, I am Jervis.',
+    statements: [
+      'I am a software engineer based in Singapore.',
+      'I have a cute white dog called Tomi.',
+      'I like beautiful interfaces almost as much as reliable systems.',
+      "I automate things I don't want to do twice.",
+      'I love learning about how systems work.',
+      'I am learning to write more.',
+    ],
+  },
   bio: 'An engineer in Singapore. I like understanding how things work, then making them work better.',
   now: 'Currently trying to learn about AI, or making content on tech.',
   location: 'Singapore',
