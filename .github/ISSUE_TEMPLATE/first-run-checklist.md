@@ -19,16 +19,16 @@ Follow this checklist to personalize and deploy your copy of this portfolio.
 
 ### Site Configuration
 - [ ] **Edit `src/config.ts`** — your name, tagline, bio, social links
-- [ ] **Edit `src/content/now.md`** — your current status update
+- [ ] **Edit `SITE.now`** in `src/config.ts` — your current status line
 - [ ] **Customize colors** in `src/styles/global.css` (or pick a preset from SETUP.md)
 
 ### Content
 - [ ] **Replace About photo** — add image to `public/images/about.jpg` and update `src/pages/about.astro`
 - [ ] **Delete/replace placeholder content** in all collections:
-  - [ ] `src/content/posts/` (keep `_example.md` as template)
+  - [ ] `src/content/notes/` (keep `_example.md` as template)
   - [ ] `src/content/projects/` (keep `_example.md` as template)
   - [ ] `src/content/photos/` (keep `_example.md` as template)
-- [ ] **Add your first real post/project/photo**
+- [ ] **Add your first real note/project/photo**
 
 ### Optional
 - [ ] **Custom domain** — add `public/CNAME` and configure DNS

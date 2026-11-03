@@ -2,9 +2,7 @@
 title: "90-Day Recomposition"
 description: "A structured plan to lose 20kg sustainably — built around constraints, not willpower."
 order: 0
-status: "growing"
 year: 2026
-tags: ["fitness", "health", "systems"]
 ---
 
 A 9-12 month project to lose 20kg at ~0.5-0.75kg/week. The approach: **diet drives the weight loss, training protects the muscle.**

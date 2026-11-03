@@ -97,11 +97,7 @@ const reviews = (await getCollection('reviews')).filter(r => !r.data.draft);
 
 Create `src/content/reviews/_example.md` with all fields shown and commented.
 
-### 9. Optional: Wire into Projects timeline
-
-If user wants `relatedWork` support, remind them to add `"reviews/slug"` to a project's `relatedWork` array.
-
-### 10. Verify
+### 9. Verify
 
 ```bash
 npm run dev

@@ -44,7 +44,6 @@ const projects = (await getCollection('projects'))
           description={project.data.description}
           href={`/projects/${project.id}/`}
           cover={project.data.cover}
-          tags={project.data.tags}
           flip={i % 2 === 1}
         />
       ))}
