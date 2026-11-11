@@ -44,6 +44,12 @@ const statements = SITE.hero.statements;
     z-index: 2;
   }
 
+  @media (min-width: 768px) {
+    .hero-statement {
+      font-size: clamp(1.9rem, 3vw, 3rem);
+    }
+  }
+
   .statement-caret {
     display: none;
     width: 0.05em;

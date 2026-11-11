@@ -6,7 +6,7 @@ export const SITE = {
     statements: [
       'I am a software engineer based in Singapore.',
       'I have a cute white dog called Tomi.',
-      'I like beautiful interfaces almost as much as reliable systems.',
+      'I like beautiful interfaces and reliable systems.',
       "I automate things I don't want to do twice.",
       'I love learning about how systems work.',
       'I am learning to write more.',
