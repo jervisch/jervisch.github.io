@@ -6,7 +6,6 @@ interface Props {
   title: string;
   description: string;
   href: string;
-  tags?: string[];
   flip?: boolean;
   cover?: string;
 }
@@ -16,7 +15,6 @@ const {
   title,
   description,
   href,
-  tags = [],
   flip = false,
   cover,
 } = Astro.props;
@@ -39,12 +37,6 @@ const gradient = cover ? getPhotoGradient(cover) : undefined;
       </h3>
 
       <p class="feature-description">{description}</p>
-
-      {tags.length > 0 && (
-        <ul class="feature-tags">
-          {tags.map(tag => <li class="type-meta">{tag}</li>)}
-        </ul>
-      )}
 
       <a href={href} class="arrow-link feature-link">
         Read more
@@ -140,13 +132,6 @@ const gradient = cover ? getPhotoGradient(cover) : undefined;
     line-height: 1.7;
     color: var(--text-secondary);
     max-width: 38ch;
-  }
-
-  .feature-tags {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-top: 20px;
   }
 
   .feature-link {

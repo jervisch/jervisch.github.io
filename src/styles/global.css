@@ -539,6 +539,34 @@ body::after {
   margin: 2em 0 0.5em;
 }
 
+/* Captioned screenshot strip (e.g. project page artefact showcase) */
+.prose .media-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px var(--grid-gap);
+  margin: 2em 0;
+}
+
+.prose .media-strip figure {
+  margin: 0;
+}
+
+.prose .media-strip img {
+  width: 100%;
+  margin: 0;
+  border: 1px solid var(--border);
+}
+
+.prose .media-strip figcaption {
+  margin-top: 8px;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .prose hr {
   border: none;
   border-top: 1px solid var(--border);

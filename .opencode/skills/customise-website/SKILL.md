@@ -22,6 +22,11 @@ Current: name = "Jervis Chan"
 Enter your name (or press Enter to keep):
 ```
 
+Also prompt for:
+- `tagline` — one line shown under the hero and used for meta descriptions
+- `hero.greeting` — the hero's opening line (e.g. "Hi, I am YourName.")
+- `hero.statements` — one statement per line; they cycle through the hero
+
 Update `src/config.ts` with responses.
 
 ### 2. Color Palette (`src/styles/global.css`)
@@ -60,22 +65,15 @@ Update `src/pages/about.astro` — replace placeholder with:
 <img src="/images/about.jpg" alt="Your Name" class="about-photo" />
 ```
 
-### 5. "Now" Section (`src/content/now.md`)
+### 5. "Now" Line (`SITE.now` in `src/config.ts`)
 
-Prompt for current status entries, write new file:
+Prompt for a one-line status update, then set it in `src/config.ts`:
 
-```markdown
----
-title: "Now"
----
-
-Updated **Month Year**
-
-- Currently building: [Project](url)
-- Learning: Topic
-- Reading: *Book* by Author
-- Listening: Album/Playlist
+```typescript
+now: "Currently building X, learning Y.",
 ```
+
+It renders as one italic line on the About page.
 
 ### 6. Custom Domain (Optional)
 
@@ -87,11 +85,14 @@ List all placeholder files, ask which to delete/replace:
 
 ```
 Placeholder files to review:
-- src/content/posts/building-a-portfolio-with-astro.md
-- src/content/posts/on-systems-thinking.md
-- src/content/projects/90-day-recomp.md
-- src/content/projects/incident-playbook.md
-- src/content/projects/this-site.md
+- src/content/notes/hello-world.md
+- src/content/notes/how-i-take-notes.md
+- src/content/notes/what-im-reading.md
+- src/content/notes/on-taking-more-photos.md
+- src/content/notes/things-im-learning.md
+- src/content/notes/_example.md, _ideas.md, _on-systems-thinking.md, _the-art-of-running-systems-at-scale.md (templates, never published)
+- src/content/projects/_90-day-recomp.md, _runbook-generator.md, _example.md (templates)
+- src/content/projects/portfolio.md
 - src/content/photos/*/*.md (20 files)
 
 Action for each: [delete] [replace] [mark draft] [keep]

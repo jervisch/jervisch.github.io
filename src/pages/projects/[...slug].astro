@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Timeline from '../../components/Timeline.astro';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -14,7 +13,7 @@ export async function getStaticPaths() {
 const { project } = Astro.props;
 const { Content } = await render(project);
 
-const { status, year, url } = project.data;
+const { year, url } = project.data;
 ---
 
 <BaseLayout title={project.data.title} description={project.data.description} prose>
@@ -25,11 +24,9 @@ const { status, year, url } = project.data;
       <h1 class="type-title project-title">{project.data.title}</h1>
       <p class="project-deck">{project.data.description}</p>
 
-      {(status || year || project.data.tags.length > 0) && (
+      {year && (
         <div class="project-meta">
-          {status && <span class="type-meta">{status}</span>}
-          {year && <span class="type-meta">{year}</span>}
-          {project.data.tags.map(tag => <span class="type-meta">{tag}</span>)}
+          <span class="type-meta">{year}</span>
         </div>
       )}
     </header>
@@ -37,8 +34,6 @@ const { status, year, url } = project.data;
     <div class="prose project-body">
       <Content />
     </div>
-
-    <Timeline refs={project.data.relatedWork} />
 
     {url && url !== '#' && (
       <div class="project-outbound">

@@ -20,7 +20,7 @@ Never commit real personal data on this user's behalf without confirming it's ac
 All content lives in `src/content/` as Markdown with YAML frontmatter. Folder
 name, collection key, route, and headings all use the same word:
 - **Notes** (`src/content/notes/`) — published at `/notes/`: title, date, description?, tags?, draft?, series?, order?
-- **Projects** (`src/content/projects/`) — published at `/projects/`: title, description, url?, order? (ascending; the homepage shows the first three), year?, status? (growing/exploring/finished/paused), cover?, relatedWork[], tags?
+- **Projects** (`src/content/projects/`) — published at `/projects/`: title, description, url?, order? (ascending; the homepage shows the first three), year?, cover?
 - **Photos** (`src/content/photos/`) — published at `/photos/`: title, date, image, caption?, location?, size? (square/tall/wide), collection, cover?, tags?
 - **Experience** (`src/content/experience/`) — no route; rendered on About: role, organization, start (YYYY or YYYY-MM), end? (omit for Present), type (work/education/volunteer/course), location?, description?, order?
 
@@ -44,7 +44,6 @@ Files prefixed with `_` are templates and are never published.
    - Create detail page `src/pages/<collectionname>/[...slug].astro` (copy from projects)
    - Add an entry to `NAV_LINKS` in `src/config.ts`
    - Add homepage section in `src/pages/index.astro`
-   - Add `relatedWork: ["collectionname/slug"]` to a project to feature that entry in its timeline
 
 ## Styling & Theming
 - Design tokens: Edit CSS custom properties in `src/styles/global.css`
@@ -73,11 +72,10 @@ Folder, collection key, route, and headings all use the same word:
 
 There are no redirects. The site went live 2026-08-31 and has no inbound links worth
 preserving, so a renamed route is simply gone. When you rename one, update
-`NAV_LINKS` in `src/config.ts`, internal links, `src/components/Timeline.astro`'s
-`REF_COLLECTIONS` list, and `src/pages/rss.xml.ts`.
+`NAV_LINKS` in `src/config.ts`, internal links, and `src/pages/rss.xml.ts`.
 
 ## Configuration
-- Site metadata (name, tagline, location, social links) and `NAV_LINKS`: `src/config.ts`
+- Site metadata (name, tagline, hero greeting/statements, location, social links) and `NAV_LINKS`: `src/config.ts`
 - Astro config: `astro.config.mjs` (site URL, integrations, markdown syntax highlighting)
 - TypeScript config: `tsconfig.json` (extends `astro/tsconfigs/strict` with path alias `@/*` → `src/*`)
 
@@ -98,10 +96,10 @@ preserving, so a renamed route is simply gone. When you rename one, update
 - Sitemap: `@astrojs/sitemap` integration
 
 ## Component Inventory
-Editorial sections (homepage): `HeroAnimation`, `ProjectEntry`, `NoteList`,
-`PhotoMosaic` (composed from `PhotoTile`)
+Editorial sections (homepage): `Hero` (greeting + cycling statement, wraps
+`HeroAnimation`), `ProjectEntry`, `NoteList`, `PhotoMosaic` (composed from `PhotoTile`)
 About-only: `ExperienceTimeline`
-Retained: `Nav`, `Footer`, `GalleryGrid`, `Lightbox`, `Timeline`, `ThemeToggle`,
+Retained: `Nav`, `Footer`, `GalleryGrid`, `Lightbox`, `ThemeToggle`,
 `ReadingProgress`, `ShareButton`
 
 Section headings on the homepage are inlined in `src/pages/index.astro` and use

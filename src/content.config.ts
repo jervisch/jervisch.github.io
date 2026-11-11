@@ -57,10 +57,7 @@ const projects = defineCollection({
     url: z.string().optional(),
     order: z.number().default(1),   // lower sorts first; the homepage takes the first 3
     year: z.number().optional(),
-    status: z.enum(['growing', 'exploring', 'finished', 'paused']).optional(),
     cover: z.string().optional(),
-    relatedWork: z.array(z.string()).default([]),  // refs like "notes/my-note" — rendered as a timeline
-    tags: z.array(z.string()).default([]),
   }),
 });
 

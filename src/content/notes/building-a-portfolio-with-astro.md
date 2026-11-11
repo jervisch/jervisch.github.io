@@ -3,7 +3,7 @@ title: "How I Built This Site (And Why You Should Steal It)"
 date: 2026-06-20
 description: "A non-technical guide to building a personal portfolio that's free to host, beautiful, and shockingly easy to update."
 tags: ["web", "astro", "design"]
-draft: false
+draft: true
 ---
 
 I recently rebuilt my personal site. The old one was a static resume page — fine for what it was, but I wanted something that could grow with me. A place for writing, photography, projects, and whatever else I get into.

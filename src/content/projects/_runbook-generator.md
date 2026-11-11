@@ -2,9 +2,7 @@
 title: "Runbook Generator"
 description: "Turns messy notes into structured step-by-step guides that anyone can follow."
 order: 1
-status: "exploring"
 year: 2026
-tags: ["documentation", "automation"]
 ---
 
 Every team has tribal knowledge — the things everyone *knows* but nobody has written down. When that knowledge lives only in people's heads, it creates fragile systems and stressful on-call rotations.

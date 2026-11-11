@@ -1,0 +1,175 @@
+---
+import HeroAnimation from './HeroAnimation.astro';
+import { SITE } from '../config';
+
+const statements = SITE.hero.statements;
+---
+
+<section class="hero">
+  <HeroAnimation />
+  <h1 class="hero-greeting type-display">{SITE.hero.greeting}</h1>
+  {statements.length > 0 && (
+    <p
+      class="hero-statement type-display"
+      id="hero-statement"
+      data-statements={JSON.stringify(statements)}
+    >
+      <span class="statement-text">{statements[0]}</span><span class="statement-caret" aria-hidden="true"></span><span class="statement-measure" aria-hidden="true"></span>
+    </p>
+  )}
+  <p class="hero-subtitle type-meta">{SITE.tagline}</p>
+</section>
+
+<style>
+  .hero {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: clamp(48px, 7vw, 88px);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-greeting,
+  .hero-statement {
+    margin: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-subtitle {
+    margin-top: 40px;
+    position: relative;
+    z-index: 2;
+  }
+
+  @media (min-width: 768px) {
+    .hero-statement {
+      font-size: clamp(1.9rem, 3vw, 3rem);
+    }
+  }
+
+  .statement-caret {
+    display: none;
+    width: 0.05em;
+    height: 0.85em;
+    margin-left: 0.04em;
+    background: currentColor;
+    vertical-align: -0.05em;
+    animation: hero-caret-blink 1s steps(1, end) infinite;
+  }
+
+  .statement-caret.is-on {
+    display: inline-block;
+  }
+
+  @keyframes hero-caret-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .statement-caret {
+      animation: none;
+    }
+  }
+
+  .statement-measure {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    visibility: hidden;
+    pointer-events: none;
+  }
+</style>
+
+<script is:inline>
+  // Typewriter cycle for the hero statement. Same binding shape as
+  // ShareButton/Nav: Astro dedupes inline scripts, so re-bind after swaps.
+  function initHeroStatement() {
+    const el = document.getElementById('hero-statement');
+    if (!el || el.dataset.bound === 'true') return;
+    el.dataset.bound = 'true';
+
+    const textEl = el.querySelector('.statement-text');
+    const caret = el.querySelector('.statement-caret');
+    const mirror = el.querySelector('.statement-measure');
+    if (!textEl) return;
+
+    let statements = [];
+    try {
+      statements = JSON.parse(el.dataset.statements || '[]');
+    } catch {
+      return;
+    }
+    if (statements.length === 0) return;
+
+    // Pin the block to the tallest statement (measured off-screen via the
+    // mirror) so the tagline never shifts — re-pinned on viewport resize.
+    function pinHeight() {
+      if (!el.isConnected || !mirror) return;
+      let maxH = 0;
+      for (const s of statements) {
+        mirror.textContent = s;
+        maxH = Math.max(maxH, mirror.offsetHeight);
+      }
+      mirror.textContent = '';
+      el.style.minHeight = maxH + 'px';
+    }
+    pinHeight();
+
+    let resizeTimer;
+    function onResize() {
+      if (!el.isConnected) {
+        window.removeEventListener('resize', onResize);
+        return;
+      }
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(pinHeight, 150);
+    }
+    window.addEventListener('resize', onResize);
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
+
+    if (caret) caret.classList.add('is-on');
+    textEl.textContent = '';
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const TYPE_MS = 60;
+    const HOLD_MS = 2600;
+    const ERASE_MS = 35;
+    const GAP_MS = 400;
+
+    async function run() {
+      let i = 0;
+      while (el.isConnected) {
+        const target = statements[i];
+        for (let c = 1; c <= target.length; c++) {
+          if (!el.isConnected) return;
+          textEl.textContent = target.slice(0, c);
+          await sleep(TYPE_MS);
+        }
+        if (!el.isConnected) return;
+        await sleep(HOLD_MS);
+        if (statements.length === 1) return;
+        if (!el.isConnected) return;
+        for (let c = target.length - 1; c >= 0; c--) {
+          if (!el.isConnected) return;
+          textEl.textContent = target.slice(0, c);
+          await sleep(ERASE_MS);
+        }
+        i = (i + 1) % statements.length;
+        await sleep(GAP_MS);
+      }
+    }
+
+    run();
+  }
+
+  initHeroStatement();
+  document.addEventListener('astro:after-swap', initHeroStatement);
+</script>
